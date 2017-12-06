@@ -1,0 +1,10 @@
+; $Id$
+name = Symposium
+description = A module for hosting academic conference that requires registration and abstract submission.
+core = 7.x
+version=7.x-0.1
+
+dependencies[] = modr8
+dependencies[] = views
+dependencies[] = views_ui
+dependencies[] = contact

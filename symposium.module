@@ -1,0 +1,219 @@
+<?php
+require_once 'includes/checkpoint.inc';
+require_once 'includes/symposium.inc';
+require_once 'includes/messages.inc';
+
+/*
+ * Set up the conferences, add a value to the arrays to create a new conference
+ */
+function symposium_get_settings() {
+  // Get all symposium nodes
+  $results = 
+    db_select('node', 'n')
+    ->fields('n', array('nid'))
+    ->condition('type', 'symposium')
+    ->execute();
+  $ids = array();
+  while ($node = $results->fetchObject()) {
+    array_push($ids, $node->nid);
+  }
+  $nodes = entity_load('node', $ids);
+  
+  // populate settings
+  $settings = array();
+  foreach ($nodes AS $n) {
+    $id = $n->field_short_name['und'][0]['value'];
+    $setting = new stdClass();
+    
+    // title
+    $setting->title = $n->title;
+    
+    // open years
+    $years = array();
+    if (isset($n->field_year['und'])) {
+      foreach ($n->field_year['und'] AS $year) {
+        array_push($years, $year['value']);
+      }
+    }
+    $setting->years =$years;
+
+    // closed years
+    $results = 
+      db_select('node_type', 'nt')
+        ->fields('nt', array('type'))
+        ->condition('type', $id . '_%_registration' , 'LIKE')
+        ->execute();
+    $closed = array();
+    while ($ntypes = $results->fetchObject()) {
+      $matched_year = preg_replace('/' . $id . '_(.+?)_registration/', '\1', $ntypes->type);
+      if(!in_array($matched_year, $years)) {
+        array_push($closed, $matched_year);
+      }
+    }
+    $setting->closed = $closed;
+    
+    // roles for registration
+    $roles = array();
+    if (isset($n->field_roles['und'])) {
+      foreach ($n->field_roles['und'] AS $role) {
+        array_push($roles, $role['value']);
+      }
+    }
+    $setting->roles =$roles;
+    
+    // role allowed for registration even when it's closed 
+    $setting->late_role =  isset($n->field_late_role['und']) ? $n->field_late_role['und'][0]['value'] : '';
+    
+    $settings[$id] = $setting;
+  }
+  return $settings;
+}
+
+function  symposium_menu () {
+  $settings = symposium_get_settings();
+  
+  $items = array();
+  foreach ($settings AS $id => $setting) {
+    $title = $setting->title;
+    $years = $setting->years;
+    $roles = $setting->roles;
+    $closed = $setting->closed;
+    $late_role = $setting->late_role;
+    foreach ($years AS $year) {
+      $items ["symposium/$id/$year/registration"] = array (
+        'title' => "$title $year Registration",
+        'page callback' => 'symposium_registration_check',
+        'page arguments' => array(1, 2),
+        'type' => MENU_CALLBACK,
+        'access arguments' => array('access content'),
+      );
+      
+      $items ["symposium/$id/$year/abstract_submission"] = array (
+        'title' => "$title $year Abstract Submission",
+        'page callback' => 'symposium_abstract_submission_check',
+        'page arguments' => array(1, 2),
+        'type' => MENU_CALLBACK,
+        'access arguments' => array('access content'),
+      );
+    }
+    foreach ($closed AS $year) {
+      $items ["symposium/$id/$year/registration"] = array (
+        'title' => "$title $year Registration",
+        'page callback' => 'symposium_registration_check',
+        'page arguments' => array(1, 2),
+        'type' => MENU_CALLBACK,
+        'access arguments' => array('access content'),
+      );
+      
+      $items ["symposium/$id/$year/abstract_submission"] = array (
+        'title' => "$title $year Abstract Submission",
+        'page callback' => 'symposium_abstract_submission_check',
+        'page arguments' => array(1, 2),
+        'type' => MENU_CALLBACK,
+        'access arguments' => array('access content'),
+      );
+    }
+  }
+  
+  $items ["symposium/mysubmission/%/%"] = array (
+    'title' => "My submission",
+    'page callback' => 'symposium_mysubmission',
+    'page arguments' => array(2, 3),
+    'type' => MENU_CALLBACK,
+    'access arguments' => array('view own unpublished content'),
+  );
+  return $items;
+}
+
+/* function  symposium_mail($key, &$message, $params) {
+  switch($key) {
+    //switching on $key lets you create variations of the email based on the $key parameter
+    case 'abstract':
+      $message['subject'] = t($params['subject']); //$vars required even if not used to get $language in there
+      //the email body is here, inside the $message array
+      $message['body'][] = t($params['body']);
+      break;
+  }
+} */
+
+/**
+* Hooks for the Signup module (needed for ICGI 2012 conference tours. Only academic scientists can 
+* sign up for the tours
+*/
+/* function icgi_form_signup_form_alter (&$form, &$form_state) {
+  # check that this user is an academic scientist
+  global $user;
+  $sql = "SELECT value  ".
+         "FROM profile_values PV  ".
+         "  INNER JOIN profile_fields PF on PV.fid = PF.fid ".
+         "  INNER JOIN users U on U.uid = PV.uid ".
+         "WHERE PF.name = 'profile_professional_status' and ".
+         "  U.uid = %d" ;
+  $value = db_fetch_object(db_Query($sql,$user->uid));
+  if(strcmp($value->value,'Professional Academic, Government or Non-profit')==0 or
+     strcmp($value->value,'Student')==0) {
+    // do nothing.. show the form
+  } else {
+    // all other types disable the form
+    $form['collapse']['#access'] = false;
+    $form['collapse']['#collapsed'] = 1;
+  }
+} */
+
+/**
+ * Add a validation function for the 'Cotton Cluster File Request Form'
+ */
+/* function icgi_form_alter (&$form, &$form_state, $form_id) {
+  if ($form['type']['#value'] == 'cotton_cluster_file_request') {
+  	// Add desciption
+  	$form['field_fullname']['#prefix'] = 
+  	'<br>The Cluster file for tetraploid cotton referenced here was developed via 
+      a public effort that included the Cotton SNP Consortium led by David 
+      M. Stelly and Amanda M. Hulse-Kemp at Texas A&M University, Iain 
+      W. Wilson at CSIRO Plant Industry, Allen Van Deynze and Hamid 
+      Ashrafi at University of California-Davis, Lori L. Hinze, Mauricio Ulloa, 
+      John Burke, and Richard G. Percy at USDA-ARS, and Jana Lemm 
+      and Martin Ganal of TraitGenetics GmbH.<br><br>
+    The Cluster file is being made available prior to publication of the primary 
+      data, contingent on prior identification and agreement to the following 
+      acknowledgements before downloading the cotton Cluster file:';
+  	// Add validation function
+  	$form['#validate'][] = 'icgi_cotton_cluster_file_request_form_validate';
+  	// Add javascript to fix the page (move the description before the 'I acknowledge' check box
+  	$form['field_acknowledge4']['#suffix'] = 
+  	"<script type='text/javascript'>
+        $('.description').each(
+          function () {
+          if ($(this).prev().hasClass('option')) {
+            $(this).insertBefore($(this).prev());
+          }
+        });
+  	</script>";
+  	$form['buttons']['submit']['#value'] = 'Submit';
+  	unset($form['buttons']['preview']);
+  }
+} */
+
+/**
+ * The validation function for the 'Cotton Cluster File Request Form'
+ */
+/* function icgi_cotton_cluster_file_request_form_validate (&$form, &$form_state) {
+  if ($form['type']['#value'] == 'cotton_cluster_file_request') {
+  	$email1 = $form_state['values']['field_email'][0]['value'];
+  	$email2 = $form_state['values']['field_email2'][0]['value'];
+  	if ($email1 != $email2) {
+  		form_set_error('field_email2', 'You have entered two different email addresses. Please double check.');
+  	}
+  	$ack1 = $form_state['values']['field_acknowledge1'][0]['value'];
+  	$ack2 = $form_state['values']['field_acknowledge2'][0]['value'];
+  	$ack3 = $form_state['values']['field_acknowledge3'][0]['value'];
+  	$ack4 = $form_state['values']['field_acknowledge4'][0]['value'];
+  	
+  	if ($ack1 && $ack2 && $ack3 && $ack4) {  		
+  	} else {
+  		form_set_error('', 'You must acknowledge all terms set below.');
+  	}
+    
+  }
+} */
+

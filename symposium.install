@@ -1,0 +1,571 @@
+<?php 
+
+function symposium_install() {
+  // Create working group session taxonomy
+  symposium_create_taxonomy (); 
+  
+  // Create symposium content type
+  symposium_create_symposium();
+
+}
+
+function symposium_create_taxonomy () {
+  $vocab = taxonomy_vocabulary_machine_name_load('symposium_working_group');
+  if (!$vocab) {
+    $vocab = (object) array(
+      'name' => 'Working group session',
+      'description' => 'This vocabulary is used to allow submitters to select the group of abstract they are submitting.',
+      'machine_name' => 'symposium_working_group',
+    );
+    taxonomy_vocabulary_save($vocab);
+  }
+  $vocab = taxonomy_vocabulary_machine_name_load('symposium_working_group');
+  $vid = $vocab->vid;
+  
+  // Create some terms
+  $name = 'Comparative Genomics and Bioinformatics';
+  $exists = symposium_taxonomy_term_exists($vid, $name);
+  if (!$exists) {
+    $term = (object) array(
+      'name' => $name,
+      'description' => 'Comparative Genomics and Bioinformatics group',
+      'vid' => $vocab->vid,
+    );  
+    taxonomy_term_save($term);
+  }
+  $name = 'Functional Genomics';
+  $exists = symposium_taxonomy_term_exists($vid, $name);
+  if (!$exists) {
+    $term = (object) array(
+      'name' => $name,
+      'description' => 'Functional Genomics group',
+      'vid' => $vocab->vid,
+    );
+    taxonomy_term_save($term);
+  }
+  $name = 'Germplasm and Genetic Stocks';
+  $exists = symposium_taxonomy_term_exists($vid, $name);
+  if (!$exists) {
+    $term = (object) array(
+      'name' => $name,
+      'description' => 'Germplasm and Genetic Stocks group',
+      'vid' => $vocab->vid,
+    );
+    taxonomy_term_save($term);
+  }
+  $name = 'Structural Genomics';
+  $exists = symposium_taxonomy_term_exists($vid, $name);
+  if (!$exists) {
+    $term = (object) array(
+      'name' => $name,
+      'description' => 'Structural Genomics group',
+      'vid' => $vocab->vid,
+    );
+    taxonomy_term_save($term);
+  }
+  $name = 'Breeding and Applied Genomics';
+  $exists = symposium_taxonomy_term_exists($vid, $name);
+  if (!$exists) {
+    $term = (object) array(
+      'name' => $name,
+      'description' => 'Breeding and Applied Genomics group',
+      'vid' => $vocab->vid,
+    );
+    taxonomy_term_save($term);
+  }
+}
+
+function symposium_taxonomy_term_exists($vid, $term) {
+  $exists = 
+    db_select('taxonomy_term_data', 't')
+    ->fields('t', array('tid'))
+    ->condition('vid', $vid)
+    ->condition('name', $term)
+    ->execute()
+    ->fetchField()
+  ;
+  return $exists;
+  
+}
+
+function symposium_create_symposium () {
+  $type = node_type_load('symposium');
+  if (!$type) {
+    $type = array(
+      'type' => 'symposium',
+      'name' => t('Symposium'),
+      'base' => 'node_content',
+      'description' => t('Setting up a symposium'),
+      'has_title' => '1'
+    );
+    $type = node_type_set_defaults($type);
+    
+    $fields = symposium_symposium_fields();
+    $field = array();
+    foreach ($fields AS $field) {
+      $fname = $field['field_name'];
+      if (!field_info_field($fname)) {
+        $field = field_create_field($field);
+      }
+    }
+    $instances = symposium_symposium_instances();
+    $instance = array();
+    foreach ($instances AS $instance) {
+      $entity_type = $instance['entity_type'];
+      $fname = $instance['field_name'];
+      $bundle = $instance['bundle'];
+      if (!field_info_instance($entity_type, $fname, $bundle)) {
+        field_create_instance($instance);
+      }
+    }
+    // Save
+    node_type_save($type);
+    
+    // set variables for the content type default (published, with preview, no comment)
+    variable_set('node_options_symposium', array('status'));
+    variable_set('node_preview_symposium', '1');
+    variable_set('comment_symposium', '0');
+  }
+} 
+
+function symposium_symposium_fields() {
+  $field_bases = array();
+  
+  // Exported field_base: 'field_abstract'.
+  $field_bases['field_short_name'] = array(
+    'active' => 1,
+    'cardinality' => 1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_short_name',
+    'indexes' => array(
+      'format' => array(
+        0 => 'format',
+      ),
+    ),
+    'locked' => 0,
+    'module' => 'text',
+    'settings' => array(
+      'allowed_values' => '',
+      'allowed_values_php' => '',
+      'max_length' => '10',
+      'text_processing' => 0,
+    ),
+    'translatable' => 0,
+    'type' => 'text',
+    'type_name' => 'symposium_short_name',
+  );
+  
+  $field_bases['field_year'] = array(
+    'active' => 1,
+    'cardinality' => -1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_year',
+    'indexes' => array(
+      'format' => array(
+        0 => 'format',
+      ),
+    ),
+    'locked' => 0,
+    'module' => 'text',
+    'settings' => array(
+      'allowed_values' => '',
+      'allowed_values_php' => '',
+      'max_length' => '10',
+      'text_processing' => 0,
+    ),
+    'translatable' => 0,
+    'type' => 'text',
+    'type_name' => 'symposium_year',
+  );
+  
+  $field_bases['field_roles'] = array(
+    'active' => 1,
+    'cardinality' => -1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_roles',
+    'indexes' => array(
+      'format' => array(
+        0 => 'format',
+      ),
+    ),
+    'locked' => 0,
+    'module' => 'text',
+    'settings' => array(
+      'allowed_values' => '',
+      'allowed_values_php' => '',
+      'max_length' => '60',
+      'text_processing' => 0,
+    ),
+    'translatable' => 0,
+    'type' => 'text',
+    'type_name' => 'symposium_roles',
+  );
+  
+  $field_bases['field_late_role'] = array(
+    'active' => 1,
+    'cardinality' => 1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_late_role',
+    'indexes' => array(
+      'format' => array(
+        0 => 'format',
+      ),
+    ),
+    'locked' => 0,
+    'module' => 'text',
+    'settings' => array(
+      'allowed_values' => '',
+      'allowed_values_php' => '',
+      'max_length' => '60',
+      'text_processing' => 0,
+    ),
+    'translatable' => 0,
+    'type' => 'text',
+    'type_name' => 'symposium_late_role',
+  );
+  return $field_bases;
+}
+
+function symposium_symposium_instances() {
+  $field_instances = array();
+  
+  $field_instances['node-symposium-field_short_name'] = array(
+    'bundle' => 'symposium',
+    'default_value' => array(
+      0 => array(
+        'value' => '',
+        '_error_element' => 'default_value_widget][field_abstract][0][value',
+      ),
+    ),
+    'deleted' => 0,
+    'description' => 'Symposium short name that will be used as an identifier. Limited to 10 characters',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => -1,
+      ),
+      'full' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => -1,
+      ),
+      'rss' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => -1,
+      ),
+      'search_index' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => -1,
+      ),
+      'search_result' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => -1,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => -1,
+      ),
+      'token' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => -1,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_short_name',
+    'label' => 'Short name (ID)',
+    'required' => 1,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'weight' => -1,
+    'widget' => array(
+      'active' => 0,
+      'module' => 'text',
+      'settings' => array(
+        'default_value_php' => NULL,
+        'size' => 10,
+      ),
+      'type' => 'text_field',
+      'weight' => -1,
+    ),
+    'widget_type' => 'text_field',
+  );
+  
+  $field_instances['node-symposium-field_year'] = array(
+    'bundle' => 'symposium',
+    'default_value' => array(
+      0 => array(
+        'value' => '',
+        '_error_element' => 'default_value_widget][field_abstract][0][value',
+      ),
+    ),
+    'deleted' => 0,
+    'description' => 'Year or sequence number of the symposium. Add a year/sequence to create Registration and Abstract Submission forms for that year. Remove the year after its creation will close the registration and abstract submission for the year.',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 10,
+      ),
+      'full' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 10,
+      ),
+      'rss' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 10,
+      ),
+      'search_index' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 10,
+      ),
+      'search_result' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 10,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 10,
+      ),
+      'token' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 10,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_year',
+    'label' => 'Year or a sequence number for creating Registration and Abstract Submission',
+    'required' => 0,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'weight' => 10,
+    'widget' => array(
+      'active' => 0,
+      'module' => 'text',
+      'settings' => array(
+        'default_value_php' => NULL,
+        'size' => 10,
+      ),
+      'type' => 'text_field',
+      'weight' => 10,
+    ),
+    'widget_type' => 'text_field',
+  );
+  
+  $field_instances['node-symposium-field_roles'] = array(
+    'bundle' => 'symposium',
+    'default_value' => array(
+      0 => array(
+        'value' => 'authenticated user',
+        '_error_element' => 'default_value_widget][field_abstract][0][value',
+      ),
+    ),
+    'deleted' => 0,
+    'description' => 'Drupal roles that are allowed to register to the symposium. (e.g. \'authenticated user\'). Users must have a valid Drupal account in one of these roles to register.',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 20,
+      ),
+      'full' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 20,
+      ),
+      'rss' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 20,
+      ),
+      'search_index' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 20,
+      ),
+      'search_result' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 20,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 20,
+      ),
+      'token' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 20,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_roles',
+    'label' => 'Roles to allow registration',
+    'required' => 0,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'weight' => 20,
+    'widget' => array(
+      'active' => 0,
+      'module' => 'text',
+      'settings' => array(
+        'default_value_php' => NULL,
+        'size' => 60,
+      ),
+      'type' => 'text_field',
+      'weight' => 20,
+    ),
+    'widget_type' => 'text_field',
+  );
+  
+  $field_instances['node-symposium-field_late_role'] = array(
+    'bundle' => 'symposium',
+    'default_value' => array(
+      0 => array(
+        'value' => '',
+        '_error_element' => 'default_value_widget][field_abstract][0][value',
+      ),
+    ),
+    'deleted' => 0,
+    'description' => 'A Drupal role that is allowed to register to the symposium even when the registration is closed.',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 30,
+      ),
+      'full' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 30,
+      ),
+      'rss' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 30,
+      ),
+      'search_index' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 30,
+      ),
+      'search_result' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 30,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 30,
+      ),
+      'token' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 30,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_late_role',
+    'label' => 'A role to allow late registration',
+    'required' => 0,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'weight' => 30,
+    'widget' => array(
+      'active' => 0,
+      'module' => 'text',
+      'settings' => array(
+        'default_value_php' => NULL,
+        'size' => 60,
+      ),
+      'type' => 'text_field',
+      'weight' => 30,
+    ),
+    'widget_type' => 'text_field',
+  );
+  return $field_instances;
+}
+
+
+
