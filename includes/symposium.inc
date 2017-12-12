@@ -93,12 +93,16 @@ function symposium_node_validate($node, $form) {
 		  }
 	  }
 	  // make sure emails are filled for all authors
-	  if ($num_authors != $num_emails) {
+	  if ($num_authors > $num_emails) {
 		  form_set_error('field_emails', 'Please provide email for all authors');
+	  } else if ($num_authors < $num_emails) {
+		  form_set_error('field_emails', 'Please remove email for deleted authors');
 	  }
 	  // make sure affiliations are filled for all authors
-	  if ($num_authors != $num_affiliations) {
+	  if ($num_authors > $num_affiliations) {
 		  form_set_error('field_affiliation', 'Please provide affiliation for all authors');
+	  } else if ($num_authors < $num_affiliations) {
+		  form_set_error('field_affiliation', 'Please remove affiliation for deleted authors');
 	  }
 	}
   }
