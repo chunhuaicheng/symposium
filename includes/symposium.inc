@@ -44,27 +44,63 @@ function symposium_node_validate($node, $form) {
    * Content Type: registration
    */
   } else if (preg_match('/.+?_.+?_registration$/', $type)) {
+	$registration = preg_match('/(.+?)_(.+?)_registration$/', $type, $matches);
+    $id = $matches[1];
+    $year = $matches[2];
+	$settings = symposium_get_settings();
+	if (isset($settings[$id]) && in_array($year, $settings[$id]->years)) {
+
+	}
   
     
   /*
    * Content Type: abstract
    */
   } else if (preg_match('/.+?_.+?_abstract$/', $type)) {
-    
-    // make sure authors are listed as Last name, First name
-    $authors_field = $node->field_authors['und'];
-    foreach ($authors_field AS $author) {
-      if (isset($author['value']) && trim($author['value']) != '' && !preg_match('/.+?\,.+/', $author['value'])) {
-        form_set_error('field_authors', 'Please separate author\'s last name and first name with a comma. i.e. (Last name, First name)');
+    $abstract = preg_match('/(.+?)_(.+?)_abstract$/', $type, $matches);
+    $id = $matches[1];
+    $year = $matches[2];
+    // make sure the abstract submission is not closed
+    $settings = symposium_get_settings();
+	if (isset($settings[$id]) && in_array($year, $settings[$id]->years)) {
+      // make sure authors are listed as Last name, First name
+      $authors_field = $node->field_authors['und'];
+	  $num_authors = 0;
+	  $num_emails = 0;
+	  $num_affiliations = 0;
+      foreach ($authors_field AS $author) {
+        if (isset($author['value']) && trim($author['value']) != '') {
+		  $num_authors ++;
+		  if (!preg_match('/.+?\,.+/', $author['value'])) {
+            form_set_error('field_authors', 'Please separate author\'s last name and first name with a comma. i.e. (Last name, First name)');
+		  }
+        }
       }
-    }
-    // make sure emails are in valid format
-    $emails_field = $node->field_emails['und'];
-    foreach ($emails_field AS $email) {
-      if (isset($email['value']) && trim($email['value']) != '' && !preg_match('/.+?@.+?\..+/', $email['value'])) {
-        form_set_error('field_emails', 'Please provide valid email(s)');
+      // make sure emails are in valid format
+      $emails_field = $node->field_emails['und'];
+      foreach ($emails_field AS $email) {
+        if (isset($email['value']) && trim($email['value']) != '') {
+          $num_emails ++;
+		  if (!preg_match('/.+?@.+?\..+/', $email['value'])) {
+		    form_set_error('field_emails', 'Please provide valid email(s)');
+		  }		  
+        }
       }
-    }
+	  $affiliation_field = $node->field_affiliation['und'];
+      foreach ($affiliation_field AS $affiliation) {
+		  if (isset($affiliation['value']) && trim($affiliation['value']) != '') {
+		    $num_affiliations++;
+		  }
+	  }
+	  // make sure emails are filled for all authors
+	  if ($num_authors != $num_emails) {
+		  form_set_error('field_emails', 'Please provide email for all authors');
+	  }
+	  // make sure affiliations are filled for all authors
+	  if ($num_authors != $num_affiliations) {
+		  form_set_error('field_affiliation', 'Please provide affiliation for all authors');
+	  }
+	}
   }
 }
 
@@ -93,34 +129,36 @@ function symposium_form_node_form_alter(&$form,&$form_state,$form_id) {
     $year = $matches[2];
     // make sure registration is not closed
     $settings = symposium_get_settings();
-    $setting = $settings[$id];
-    $closed = $setting->closed;
-    if (in_array($year, $closed)) {
-      if (!in_array($setting->late_role, $roles)) {
+	if (isset($settings[$id]) && in_array($year, $settings[$id]->years)) {
+      $setting = $settings[$id];
+      $closed = $setting->closed;
+      if (in_array($year, $closed)) {
+        if (!in_array($setting->late_role, $roles)) {
+          drupal_goto("symposium/$id/$year/registration");
+        }
+      }
+      // make sure the user is not already registered
+      $sql = "SELECT nid FROM {node} WHERE type = '" . $id . "_" . $year . "_registration' AND uid = :uid";
+      $nid = db_query($sql, array(':uid' => $user->uid))->fetchField();
+      if ($nid && !$form['nid']['#value']) {
         drupal_goto("symposium/$id/$year/registration");
       }
-    }
-    // make sure the user is not already registered
-    $sql = "SELECT nid FROM {node} WHERE type = '" . $id . "_" . $year . "_registration' AND uid = :uid";
-    $nid = db_query($sql, array(':uid' => $user->uid))->fetchField();
-    if ($nid && !$form['nid']['#value']) {
-      drupal_goto("symposium/$id/$year/registration");
-    }
     
-    // add a default title
-    $form_state['node']->title = 'Registerd';
+      // add a default title
+      $form_state['node']->title = 'Registerd';
     
-    unset($form['actions']['preview']);        // disable preview
-    unset($form['revision_information']);   // disable revision
-    unset($form['comment_settings']);      // disable comment settings
-    $form_state['node']->comment = '0'; // disable comment
-    unset($form['menu']);                           // disable menu
-    unset($form['additional_settings']);    // disable additional settings
-    unset($form['author']);                         // disable authoring
-    unset($form['options']);                       // disable publishing options
-    unset($form['path']);                            // disable URL path
-    $form_state['node']->promote = '0'; // don't promot to the front
-    $form_state['node']->status = '0';      // don't publish the registration
+      unset($form['actions']['preview']);        // disable preview
+      unset($form['revision_information']);   // disable revision
+      unset($form['comment_settings']);      // disable comment settings
+      $form_state['node']->comment = '0'; // disable comment
+      unset($form['menu']);                           // disable menu
+      unset($form['additional_settings']);    // disable additional settings
+      unset($form['author']);                         // disable authoring
+      unset($form['options']);                       // disable publishing options
+      unset($form['path']);                            // disable URL path
+      $form_state['node']->promote = '0'; // don't promot to the front
+      $form_state['node']->status = '0';      // don't publish the registration
+	}
     
   /*
    * Content Type: abstract
@@ -134,30 +172,31 @@ function symposium_form_node_form_alter(&$form,&$form_state,$form_id) {
     $year = $matches[2];
     // make sure the abstract submission is not closed
     $settings = symposium_get_settings();
-    $setting = $settings[$id];
-    $closed = $setting->closed;
-    if (in_array($year, $closed)) {
-      if (!in_array($setting->late_role, $roles)) {
+	if (isset($settings[$id]) && in_array($year, $settings[$id]->years)) {
+      $setting = $settings[$id];
+      $closed = $setting->closed;
+      if (in_array($year, $closed)) {
+        if (!in_array($setting->late_role, $roles)) {
+          drupal_goto("symposium/$id/$year/abstract_submission");
+        }
+      }
+      // make sure the user is already registered
+      $sql = "SELECT nid FROM {node} WHERE type = '" . $id . "_" . $year . "_registration' AND uid = :uid";
+      $nid = db_query($sql, array(':uid' => $user->uid))->fetchField();
+      if (!$nid) {
         drupal_goto("symposium/$id/$year/abstract_submission");
       }
-    }
-    // make sure the user is already registered
-    $sql = "SELECT nid FROM {node} WHERE type = '" . $id . "_" . $year . "_registration' AND uid = :uid";
-    $nid = db_query($sql, array(':uid' => $user->uid))->fetchField();
-    if (!$nid) {
-      drupal_goto("symposium/$id/$year/abstract_submission");
-    }
     
-    unset($form['revision_information']); // disable revision
-    unset($form['comment_settings']);     // disable comment settings
-    $form_state['node']->comment = '0'; // disable comment
-    unset($form['menu']);                           // disable menu
-    unset($form['additional_settings']);    // disable additional settings
-    unset($form['author']);                         // disable authoring
-    unset($form['options']);                       // disable publishing options
-    unset($form['path']);                            // disable URL path
-    $form_state['node']->promote = '0'; // don't promot to the front
-
+      unset($form['revision_information']); // disable revision
+      unset($form['comment_settings']);     // disable comment settings
+      $form_state['node']->comment = '0'; // disable comment
+      unset($form['menu']);                           // disable menu
+      unset($form['additional_settings']);    // disable additional settings
+      unset($form['author']);                         // disable authoring
+      unset($form['options']);                       // disable publishing options
+      unset($form['path']);                            // disable URL path
+      $form_state['node']->promote = '0'; // don't promot to the front
+    }
   }
 }
 
