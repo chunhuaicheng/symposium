@@ -2,6 +2,7 @@
 require_once 'includes/checkpoint.inc';
 require_once 'includes/symposium.inc';
 require_once 'includes/messages.inc';
+require_once 'includes/moderation.inc';
 
 /*
  * Set up the conferences, add a value to the arrays to create a new conference
@@ -130,6 +131,7 @@ function  symposium_menu () {
  */
 function symposium_block_info() {
   $settings = symposium_get_settings();
+  $blocks = array();
   foreach ($settings AS $id => $setting) {
     $title = $setting->title;
     $years = $setting->years;

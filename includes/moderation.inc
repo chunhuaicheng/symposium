@@ -1,12 +1,12 @@
 <?php
-/* function  symposium_form_modr8_response_form_alter (&$form, &$form_state) {
+function  symposium_form_modr8_response_form_alter (&$form, &$form_state) {
   $node = node_load(arg(1));
   $form['title']['#value'] = 'Response regarding '.$node->title;
   
-} */
+}
 
 // Alter abstract moderation form
-/* function  symposium_form_modr8_form_alter (&$form, &$form_state) {
+function  symposium_form_modr8_form_alter (&$form, &$form_state) {
   // change 'No action' to 'E-mail author'
   foreach ($form as $id =>$value) {
     if (preg_match('/^\d+$/', $id)) {
@@ -21,4 +21,4 @@
     '#type' => 'submit',
     '#value' => t('Submit'),
   );
-} */
+}

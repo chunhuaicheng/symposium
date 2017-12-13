@@ -2,6 +2,33 @@
 function symposium_abstract_fields($id, $year, $title) {
   $field_bases = array();
   
+  // Working_group'.
+  $field_bases['taxonomy_symposium_working_group'] = array(
+      'active' => 1,
+      'cardinality' => -1,
+      'deleted' => 0,
+      'entity_types' => array(),
+      'field_name' => 'taxonomy_symposium_working_group',
+      'indexes' => array(
+          'tid' => array(
+              0 => 'tid',
+          ),
+      ),
+      'locked' => 0,
+      'module' => 'taxonomy',
+      'settings' => array(
+          'allowed_values' => array(
+              0 => array(
+                  'vocabulary' => 'symposium_working_group',
+                  'parent' => 0,
+              ),
+          ),
+          'required' => TRUE,
+      ),
+      'translatable' => 0,
+      'type' => 'taxonomy_term_reference',
+  );
+  
   // Presentation type
   $field_bases['field_presentation'] = array(
     'active' => 1,
@@ -29,33 +56,6 @@ function symposium_abstract_fields($id, $year, $title) {
     'translatable' => 0,
     'type' => 'list_text',
     'type_name' => $id . '_' . $year . '_abstract',
-  );
-
-  // Working_group'.
-  $field_bases['taxonomy_symposium_working_group'] = array(
-    'active' => 1,
-    'cardinality' => -1,
-    'deleted' => 0,
-    'entity_types' => array(),
-    'field_name' => 'taxonomy_symposium_working_group',
-    'indexes' => array(
-      'tid' => array(
-        0 => 'tid',
-      ),
-    ),
-    'locked' => 0,
-    'module' => 'taxonomy',
-    'settings' => array(
-      'allowed_values' => array(
-        0 => array(
-          'vocabulary' => 'symposium_working_group',
-          'parent' => 0,
-        ),
-      ),
-      'required' => TRUE,
-    ),
-    'translatable' => 0,
-    'type' => 'taxonomy_term_reference',
   );
 
   // Authors
@@ -164,6 +164,43 @@ function symposium_abstract_fields($id, $year, $title) {
 function symposium_abstract_instances($id, $year, $title) {
   $field_instances = array();
   
+  // Working group
+  $field_instances['node-' . $id . '_' . $year . '_abstract-taxonomy_symposium_working_group'] = array(
+      'bundle' => $id . '_' . $year . '_abstract',
+      'default_value' => NULL,
+      'deleted' => 0,
+      'description' => 'Please select the type of abstract submitted.',
+      'display' => array(
+          'default' => array(
+              'label' => 'hidden',
+              'module' => 'taxonomy',
+              'settings' => array(),
+              'type' => 'taxonomy_term_reference_link',
+              'weight' => 0,
+          ),
+          'teaser' => array(
+              'label' => 'hidden',
+              'module' => 'taxonomy',
+              'settings' => array(),
+              'type' => 'taxonomy_term_reference_link',
+              'weight' => 0,
+          ),
+      ),
+      'entity_type' => 'node',
+      'field_name' => 'taxonomy_symposium_working_group',
+      'label' => 'Working group session',
+      'required' => 1,
+      'settings' => array(
+          'user_register_form' => FALSE,
+      ),
+      'widget' => array(
+          'module' => 'options',
+          'settings' => array(),
+          'type' => 'options_select',
+          'weight' => 0,
+      ),
+  );
+  
   // Presentation type
   $field_instances['node-' . $id . '_' . $year . '_abstract-field_presentation'] = array(
     'bundle' => $id . '_' . $year . '_abstract',
@@ -176,49 +213,49 @@ function symposium_abstract_instances($id, $year, $title) {
     'description' => '',
     'display' => array(
       'default' => array(
-        'label' => 'above',
+        'label' => 'inline',
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
         'weight' => 1,
       ),
       'full' => array(
-        'label' => 'above',
+        'label' => 'inline',
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
         'weight' => 1,
       ),
       'rss' => array(
-        'label' => 'above',
+        'label' => 'inline',
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
         'weight' => 1,
       ),
       'search_index' => array(
-        'label' => 'above',
+        'label' => 'inline',
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
         'weight' => 1,
       ),
       'search_result' => array(
-        'label' => 'above',
+        'label' => 'inline',
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
         'weight' => 1,
       ),
       'teaser' => array(
-        'label' => 'above',
+        'label' => 'inline',
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
         'weight' => 1,
       ),
       'token' => array(
-        'label' => 'above',
+        'label' => 'inline',
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
@@ -245,43 +282,6 @@ function symposium_abstract_instances($id, $year, $title) {
     ),
     'widget_type' => 'optionwidgets_buttons',
   );
-  
-  // Working group  
-  $field_instances['node-' . $id . '_' . $year . '_abstract-taxonomy_symposium_working_group'] = array(
-    'bundle' => $id . '_' . $year . '_abstract',
-    'default_value' => NULL,
-    'deleted' => 0,
-    'description' => 'Please select the type of abstract submitted.',
-    'display' => array(
-      'default' => array(
-        'label' => 'above',
-        'module' => 'taxonomy',
-        'settings' => array(),
-        'type' => 'taxonomy_term_reference_link',
-        'weight' => 10,
-      ),
-      'teaser' => array(
-        'label' => 'above',
-        'module' => 'taxonomy',
-        'settings' => array(),
-        'type' => 'taxonomy_term_reference_link',
-        'weight' => 10,
-      ),
-    ),
-    'entity_type' => 'node',
-    'field_name' => 'taxonomy_symposium_working_group',
-    'label' => 'Working group session',
-    'required' => 1,
-    'settings' => array(
-      'user_register_form' => FALSE,
-    ),
-    'widget' => array(
-      'module' => 'options',
-      'settings' => array(),
-      'type' => 'options_select',
-      'weight' => 0,
-    ),
-  );
 
   // Authors
   $field_instances['node-' . $id . '_' . $year . '_abstract-field_authors'] = array(
@@ -295,49 +295,49 @@ function symposium_abstract_instances($id, $year, $title) {
     'description' => 'List all authors in the \'Last name, First name\' format',
     'display' => array(
       'default' => array(
-        'label' => 'above',
+        'label' => 'inline',
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
         'weight' => 10,
       ),
       'full' => array(
-        'label' => 'above',
+        'label' => 'inline',
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
         'weight' => 10,
       ),
       'rss' => array(
-        'label' => 'above',
+        'label' => 'inline',
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
         'weight' => 10,
       ),
       'search_index' => array(
-        'label' => 'above',
+        'label' => 'inline',
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
         'weight' => 10,
       ),
       'search_result' => array(
-        'label' => 'above',
+        'label' => 'inline',
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
         'weight' => 10,
       ),
       'teaser' => array(
-        'label' => 'above',
+        'label' => 'inline',
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
         'weight' => 10,
       ),
       'token' => array(
-        'label' => 'above',
+        'label' => 'inline',
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
@@ -378,28 +378,28 @@ function symposium_abstract_instances($id, $year, $title) {
     'description' => 'List authors\' email in the same order as the authors listed above',
     'display' => array(
       'default' => array(
-        'label' => 'above',
+        'label' => 'inline',
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
         'weight' => 20,
       ),
       'full' => array(
-        'label' => 'above',
+        'label' => 'inline',
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
         'weight' => 20,
       ),
       'rss' => array(
-        'label' => 'above',
+        'label' => 'inline',
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
         'weight' => 20,
       ),
       'search_index' => array(
-        'label' => 'above',
+        'label' => 'inline',
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
@@ -413,14 +413,14 @@ function symposium_abstract_instances($id, $year, $title) {
         'weight' => 20,
       ),
       'teaser' => array(
-        'label' => 'above',
+        'label' => 'inline',
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
         'weight' => 20,
       ),
       'token' => array(
-        'label' => 'above',
+        'label' => 'inline',
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
@@ -461,7 +461,7 @@ function symposium_abstract_instances($id, $year, $title) {
     'description' => 'List authors\' affliation in the same order as the authors listed above',
     'display' => array(
       'default' => array(
-        'label' => 'above',
+        'label' => 'inline',
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
@@ -475,35 +475,35 @@ function symposium_abstract_instances($id, $year, $title) {
         'weight' => 20,
       ),
       'rss' => array(
-        'label' => 'above',
+        'label' => 'inline',
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
         'weight' => 20,
       ),
       'search_index' => array(
-        'label' => 'above',
+        'label' => 'inline',
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
         'weight' => 20,
       ),
       'search_result' => array(
-        'label' => 'above',
+        'label' => 'inline',
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
         'weight' => 20,
       ),
       'teaser' => array(
-        'label' => 'above',
+        'label' => 'inline',
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
         'weight' => 20,
       ),
       'token' => array(
-        'label' => 'above',
+        'label' => 'inline',
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
