@@ -253,7 +253,7 @@ function symposium_mysubmission($id, $year) {
     $counter ++;
   }
   $list .= '</ul>';
-  $list = "You have $counter submission.<br>" . $list;
+  $list = "You have $counter submission(s).<br>" . $list;
   $settings = symposium_get_settings();
   $setting = $settings[$id];
   drupal_set_title("My $setting->title $year submission");
@@ -282,4 +282,26 @@ function symposium_grant_permissions($type, $roles) {
       user_role_revoke_permissions($rid, $permissions);
     }
   } 
+}
+
+/**
+ * Node view alter
+ */
+function  symposium_node_view_alter (&$build) {
+    $bundle = $build['#bundle'];
+    
+    //Add abstract submission hyperlink to the registration node
+    if (preg_match('/(.+?)_(.+?)_registration$/', $bundle)) {
+        $registration = preg_match('/(.+?)_(.+?)_registration$/', $bundle, $matches);
+        $id = $matches[1];
+        $year = $matches[2];
+        // make sure the abstract submission is not closed
+        $settings = symposium_get_settings();
+        if (isset($settings[$id]) && in_array($year, $settings[$id]->years)) {
+            $build['#node']->content['my_additional_field'] = array(
+                '#markup' => "<br><div><a href=\"add/$id-$year-abstract\">Submit Abstract for " . $settings[$id]->title . " $year</a></div>",
+                '#weight' => 60,
+            );
+        }
+    }
 }

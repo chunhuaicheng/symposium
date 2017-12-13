@@ -125,95 +125,237 @@ function  symposium_menu () {
   return $items;
 }
 
-/* function  symposium_mail($key, &$message, $params) {
-  switch($key) {
-    //switching on $key lets you create variations of the email based on the $key parameter
-    case 'abstract':
-      $message['subject'] = t($params['subject']); //$vars required even if not used to get $language in there
-      //the email body is here, inside the $message array
-      $message['body'][] = t($params['body']);
-      break;
-  }
-} */
-
 /**
-* Hooks for the Signup module (needed for ICGI 2012 conference tours. Only academic scientists can 
-* sign up for the tours
-*/
-/* function icgi_form_signup_form_alter (&$form, &$form_state) {
-  # check that this user is an academic scientist
-  global $user;
-  $sql = "SELECT value  ".
-         "FROM profile_values PV  ".
-         "  INNER JOIN profile_fields PF on PV.fid = PF.fid ".
-         "  INNER JOIN users U on U.uid = PV.uid ".
-         "WHERE PF.name = 'profile_professional_status' and ".
-         "  U.uid = %d" ;
-  $value = db_fetch_object(db_Query($sql,$user->uid));
-  if(strcmp($value->value,'Professional Academic, Government or Non-profit')==0 or
-     strcmp($value->value,'Student')==0) {
-    // do nothing.. show the form
-  } else {
-    // all other types disable the form
-    $form['collapse']['#access'] = false;
-    $form['collapse']['#collapsed'] = 1;
-  }
-} */
-
-/**
- * Add a validation function for the 'Cotton Cluster File Request Form'
+ * Implements hook_block_info().
  */
-/* function icgi_form_alter (&$form, &$form_state, $form_id) {
-  if ($form['type']['#value'] == 'cotton_cluster_file_request') {
-  	// Add desciption
-  	$form['field_fullname']['#prefix'] = 
-  	'<br>The Cluster file for tetraploid cotton referenced here was developed via 
-      a public effort that included the Cotton SNP Consortium led by David 
-      M. Stelly and Amanda M. Hulse-Kemp at Texas A&M University, Iain 
-      W. Wilson at CSIRO Plant Industry, Allen Van Deynze and Hamid 
-      Ashrafi at University of California-Davis, Lori L. Hinze, Mauricio Ulloa, 
-      John Burke, and Richard G. Percy at USDA-ARS, and Jana Lemm 
-      and Martin Ganal of TraitGenetics GmbH.<br><br>
-    The Cluster file is being made available prior to publication of the primary 
-      data, contingent on prior identification and agreement to the following 
-      acknowledgements before downloading the cotton Cluster file:';
-  	// Add validation function
-  	$form['#validate'][] = 'icgi_cotton_cluster_file_request_form_validate';
-  	// Add javascript to fix the page (move the description before the 'I acknowledge' check box
-  	$form['field_acknowledge4']['#suffix'] = 
-  	"<script type='text/javascript'>
-        $('.description').each(
-          function () {
-          if ($(this).prev().hasClass('option')) {
-            $(this).insertBefore($(this).prev());
+function symposium_block_info() {
+  $settings = symposium_get_settings();
+  foreach ($settings AS $id => $setting) {
+    $title = $setting->title;
+    $years = $setting->years;
+    $closed = $setting->closed;
+    foreach ($years AS $year) {
+      if (!in_array($year, $closed)) {
+        $blocks['symposium-' . $id . '-' . $year]['info'] = $title . ' ' . $year;
+        $blocks['symposium-' . $id . '-' . $year]['cache'] = DRUPAL_CACHE_GLOBAL;
+      }
+    }
+  }    
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function symposium_block_view($delta = '') {
+    $block = array();
+    $settings = symposium_get_settings();
+    foreach ($settings AS $id => $setting) {
+        $title = $setting->title;
+        $years = $setting->years;
+        $closed = $setting->closed;
+        foreach ($years AS $year) {
+          if (!in_array($year, $closed)) {
+            if ($delta == 'symposium-' . $id . '-' . $year) {
+              $block['subject'] = $title . ' ' . $year;
+              $block['content'] = 
+                t("<ul>
+                   <li><a href=\"@register\">Register</a></li>
+                   <li><a href=\"@abstract\">Submit Abstract</a></li>",
+                array(
+                  '@register' => url("symposium/$id/$year/registration"),
+                  '@abstract' => url("symposium/$id/$year/abstract_submission")
+                )
+              );
+              $access = user_access('view own unpublished content');
+              if ($access) {
+                  $block['content'] .= t("<li><a href=\"@submission\">My submission</a></li>", array('@submission' => url("symposium/mysubmission/$id/$year")));
+              }
+              $block['content'] .= t("<li><a href=\"@pub\">Current Publication</a></li>", array('@pub' => url("symposium/list/abstract/$id" . "_" . $year . "_abstract")));
+              $access = user_access('administer nodes');
+              if ($access) {
+                  $block['content'] .= t("<li><a href=\"@registered\">Registered Users</a></li></ul>", array('@registered' => url("symposium/list/registration/$id" . "_" . $year . "_registration")));
+              } else {
+                  $block['content'] .= t("</ul>");
+              }
+            }
           }
-        });
-  	</script>";
-  	$form['buttons']['submit']['#value'] = 'Submit';
-  	unset($form['buttons']['preview']);
-  }
-} */
+        }
+    }
+    return $block;
+}
 
 /**
- * The validation function for the 'Cotton Cluster File Request Form'
+ * Implementation of hook_views_api().
  */
-/* function icgi_cotton_cluster_file_request_form_validate (&$form, &$form_state) {
-  if ($form['type']['#value'] == 'cotton_cluster_file_request') {
-  	$email1 = $form_state['values']['field_email'][0]['value'];
-  	$email2 = $form_state['values']['field_email2'][0]['value'];
-  	if ($email1 != $email2) {
-  		form_set_error('field_email2', 'You have entered two different email addresses. Please double check.');
-  	}
-  	$ack1 = $form_state['values']['field_acknowledge1'][0]['value'];
-  	$ack2 = $form_state['values']['field_acknowledge2'][0]['value'];
-  	$ack3 = $form_state['values']['field_acknowledge3'][0]['value'];
-  	$ack4 = $form_state['values']['field_acknowledge4'][0]['value'];
-  	
-  	if ($ack1 && $ack2 && $ack3 && $ack4) {  		
-  	} else {
-  		form_set_error('', 'You must acknowledge all terms set below.');
-  	}
-    
-  }
-} */
+function symposium_views_api() {
+    return array(
+        'api' => 3.0,
+        'path' => drupal_get_path('module', 'symposium')
+    );
+}
 
+/**
+ * Implementation of hook_views_default_views().
+ */
+function symposium_views_default_views() {
+    
+    /**
+     * Current Publication/Abstracts
+     */
+    $view = new view();
+    $view->name = 'abstracts';
+    $view->description = '';
+    $view->tag = 'default';
+    $view->base_table = 'node';
+    $view->human_name = 'abstracts';
+    $view->core = 7;
+    $view->api_version = '3.0';
+    $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
+    
+    /* Display: Master */
+    $handler = $view->new_display('default', 'Master', 'default');
+    $handler->display->display_options['use_more_always'] = FALSE;
+    $handler->display->display_options['access']['type'] = 'perm';
+    $handler->display->display_options['cache']['type'] = 'none';
+    $handler->display->display_options['query']['type'] = 'views_query';
+    $handler->display->display_options['exposed_form']['type'] = 'basic';
+    $handler->display->display_options['pager']['type'] = 'full';
+    $handler->display->display_options['pager']['options']['items_per_page'] = '10';
+    $handler->display->display_options['style_plugin'] = 'default';
+    $handler->display->display_options['row_plugin'] = 'node';
+    $handler->display->display_options['row_options']['view_mode'] = 'full';
+    /* Field: Content: Title */
+    $handler->display->display_options['fields']['title']['id'] = 'title';
+    $handler->display->display_options['fields']['title']['table'] = 'node';
+    $handler->display->display_options['fields']['title']['field'] = 'title';
+    $handler->display->display_options['fields']['title']['label'] = '';
+    $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
+    $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
+    /* Sort criterion: Content: Post date */
+    $handler->display->display_options['sorts']['created']['id'] = 'created';
+    $handler->display->display_options['sorts']['created']['table'] = 'node';
+    $handler->display->display_options['sorts']['created']['field'] = 'created';
+    $handler->display->display_options['sorts']['created']['order'] = 'DESC';
+    /* Contextual filter: Content: Type */
+    $handler->display->display_options['arguments']['type']['id'] = 'type';
+    $handler->display->display_options['arguments']['type']['table'] = 'node';
+    $handler->display->display_options['arguments']['type']['field'] = 'type';
+    $handler->display->display_options['arguments']['type']['default_action'] = 'default';
+    $handler->display->display_options['arguments']['type']['default_argument_type'] = 'fixed';
+    $handler->display->display_options['arguments']['type']['default_argument_options']['argument'] = 'No results';
+    $handler->display->display_options['arguments']['type']['summary']['number_of_records'] = '0';
+    $handler->display->display_options['arguments']['type']['summary']['format'] = 'default_summary';
+    $handler->display->display_options['arguments']['type']['summary_options']['items_per_page'] = '25';
+    $handler->display->display_options['arguments']['type']['limit'] = '0';
+    /* Filter criterion: Content: Published */
+    $handler->display->display_options['filters']['status']['id'] = 'status';
+    $handler->display->display_options['filters']['status']['table'] = 'node';
+    $handler->display->display_options['filters']['status']['field'] = 'status';
+    $handler->display->display_options['filters']['status']['value'] = 1;
+    $handler->display->display_options['filters']['status']['group'] = 1;
+    $handler->display->display_options['filters']['status']['expose']['operator'] = FALSE;
+    
+    /* Display: Page */
+    $handler = $view->new_display('page', 'Page', 'page');
+    $handler->display->display_options['path'] = 'symposium/list/abstract';
+       
+    $views[$view->name] = $view;
+    
+    /**
+     * Registered Users
+     */
+    $view = new view();
+    $view->name = 'registration';
+    $view->description = '';
+    $view->tag = 'default';
+    $view->base_table = 'node';
+    $view->human_name = 'registration';
+    $view->core = 7;
+    $view->api_version = '3.0';
+    $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
+    
+    /* Display: Master */
+    $handler = $view->new_display('default', 'Master', 'default');
+    $handler->display->display_options['use_more_always'] = FALSE;
+    $handler->display->display_options['access']['type'] = 'role';
+    $handler->display->display_options['access']['role'] = array(
+        3 => '3',
+    );
+    $handler->display->display_options['cache']['type'] = 'none';
+    $handler->display->display_options['query']['type'] = 'views_query';
+    $handler->display->display_options['exposed_form']['type'] = 'basic';
+    $handler->display->display_options['pager']['type'] = 'full';
+    $handler->display->display_options['pager']['options']['items_per_page'] = '10';
+    $handler->display->display_options['style_plugin'] = 'table';
+    $handler->display->display_options['style_options']['columns'] = array(
+        'title' => 'title',
+    );
+    $handler->display->display_options['style_options']['default'] = '-1';
+    $handler->display->display_options['style_options']['info'] = array(
+        'title' => array(
+            'sortable' => 0,
+            'default_sort_order' => 'asc',
+            'align' => '',
+            'separator' => '',
+            'empty_column' => 0,
+        ),
+    );
+    /* Relationship: Content: Author */
+    $handler->display->display_options['relationships']['uid']['id'] = 'uid';
+    $handler->display->display_options['relationships']['uid']['table'] = 'node';
+    $handler->display->display_options['relationships']['uid']['field'] = 'uid';
+    $handler->display->display_options['relationships']['uid']['required'] = TRUE;
+    /* Field: Content: Title */
+    $handler->display->display_options['fields']['title']['id'] = 'title';
+    $handler->display->display_options['fields']['title']['table'] = 'node';
+    $handler->display->display_options['fields']['title']['field'] = 'title';
+    $handler->display->display_options['fields']['title']['label'] = 'Status';
+    $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
+    $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
+    $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
+    $handler->display->display_options['fields']['title']['link_to_node'] = FALSE;
+    /* Field: Content: Requests */
+    $handler->display->display_options['fields']['field_requests']['id'] = 'field_requests';
+    $handler->display->display_options['fields']['field_requests']['table'] = 'field_data_field_requests';
+    $handler->display->display_options['fields']['field_requests']['field'] = 'field_requests';
+    $handler->display->display_options['fields']['field_requests']['delta_offset'] = '0';
+    $handler->display->display_options['fields']['field_requests']['separator'] = '<br>';
+    /* Field: User: Name */
+    $handler->display->display_options['fields']['name']['id'] = 'name';
+    $handler->display->display_options['fields']['name']['table'] = 'users';
+    $handler->display->display_options['fields']['name']['field'] = 'name';
+    $handler->display->display_options['fields']['name']['relationship'] = 'uid';
+    $handler->display->display_options['fields']['name']['label'] = 'User';
+    /* Sort criterion: Content: Post date */
+    $handler->display->display_options['sorts']['created']['id'] = 'created';
+    $handler->display->display_options['sorts']['created']['table'] = 'node';
+    $handler->display->display_options['sorts']['created']['field'] = 'created';
+    $handler->display->display_options['sorts']['created']['order'] = 'DESC';
+    /* Contextual filter: Content: Type */
+    $handler->display->display_options['arguments']['type']['id'] = 'type';
+    $handler->display->display_options['arguments']['type']['table'] = 'node';
+    $handler->display->display_options['arguments']['type']['field'] = 'type';
+    $handler->display->display_options['arguments']['type']['default_action'] = 'default';
+    $handler->display->display_options['arguments']['type']['default_argument_type'] = 'fixed';
+    $handler->display->display_options['arguments']['type']['default_argument_options']['argument'] = 'No results';
+    $handler->display->display_options['arguments']['type']['summary']['number_of_records'] = '0';
+    $handler->display->display_options['arguments']['type']['summary']['format'] = 'default_summary';
+    $handler->display->display_options['arguments']['type']['summary_options']['items_per_page'] = '25';
+    $handler->display->display_options['arguments']['type']['limit'] = '0';
+    /* Filter criterion: Content: Published */
+    $handler->display->display_options['filters']['status']['id'] = 'status';
+    $handler->display->display_options['filters']['status']['table'] = 'node';
+    $handler->display->display_options['filters']['status']['field'] = 'status';
+    $handler->display->display_options['filters']['status']['value'] = '0';
+    $handler->display->display_options['filters']['status']['group'] = 1;
+    $handler->display->display_options['filters']['status']['expose']['operator'] = FALSE;
+    
+    /* Display: Page */
+    $handler = $view->new_display('page', 'Page', 'page');
+    $handler->display->display_options['path'] = 'symposium/list/registration';
+    
+    $views[$view->name] = $view;
+    
+    return $views;
+}
