@@ -7,6 +7,9 @@ function  symposium_form_modr8_response_form_alter (&$form, &$form_state) {
 
 // Alter abstract moderation form
 function  symposium_form_modr8_form_alter (&$form, &$form_state) {
+  // Add css to the form
+  drupal_add_css (drupal_get_path ( 'module', 'symposium' ) . '/theme/symposium.css' );
+  
   // change 'No action' to 'E-mail author'
   foreach ($form as $id =>$value) {
     if (preg_match('/^\d+$/', $id)) {
