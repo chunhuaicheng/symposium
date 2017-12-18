@@ -68,12 +68,12 @@ function symposium_node_validate($node, $form) {
 	  $num_authors = 0;
 	  $num_emails = 0;
 	  $num_affiliations = 0;
-      foreach ($authors_field AS $author) {
+      foreach ($authors_field AS $key => $author) {
         if (isset($author['value']) && trim($author['value']) != '') {
-		  $num_authors ++;
-		  if (!preg_match('/.+?\,.+/', $author['value'])) {
+          $num_authors ++;
+          if (is_numeric($key) && !preg_match('/.+?\,.+/', $author['value'])) {
             form_set_error('field_authors', 'Please separate author\'s last name and first name with a comma. i.e. (Last name, First name)');
-		  }
+          }
         }
       }
       // make sure emails are in valid format
@@ -81,7 +81,7 @@ function symposium_node_validate($node, $form) {
       foreach ($emails_field AS $email) {
         if (isset($email['value']) && trim($email['value']) != '') {
           $num_emails ++;
-		  if (!preg_match('/.+?@.+?\..+/', $email['value'])) {
+          if (is_numeric($key) && !preg_match('/.+?@.+?\..+/', $email['value'])) {
 		    form_set_error('field_emails', 'Please provide valid email(s)');
 		  }		  
         }
