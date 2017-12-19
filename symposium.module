@@ -23,7 +23,7 @@ function symposium_get_settings() {
   // populate settings
   $settings = array();
   foreach ($nodes AS $n) {
-    $id = $n->field_short_name['und'][0]['value'];
+    $id = $n->field_symposium_short_name['und'][0]['value'];
     $setting = new stdClass();
     
     // title
@@ -31,8 +31,8 @@ function symposium_get_settings() {
     
     // open years
     $years = array();
-    if (isset($n->field_year['und'])) {
-      foreach ($n->field_year['und'] AS $year) {
+    if (isset($n->field_symposium_year['und'])) {
+      foreach ($n->field_symposium_year['und'] AS $year) {
         array_push($years, $year['value']);
       }
     }
@@ -55,15 +55,15 @@ function symposium_get_settings() {
     
     // roles for registration
     $roles = array();
-    if (isset($n->field_roles['und'])) {
-      foreach ($n->field_roles['und'] AS $role) {
+    if (isset($n->field_symposium_roles['und'])) {
+      foreach ($n->field_symposium_roles['und'] AS $role) {
         array_push($roles, $role['value']);
       }
     }
     $setting->roles =$roles;
     
     // role allowed for registration even when it's closed 
-    $setting->late_role =  isset($n->field_late_role['und']) ? $n->field_late_role['und'][0]['value'] : '';
+    $setting->late_role =  isset($n->field_symposium_late_role['und']) ? $n->field_symposium_late_role['und'][0]['value'] : '';
     
     $settings[$id] = $setting;
   }
@@ -318,11 +318,11 @@ function symposium_views_default_views() {
     $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
     $handler->display->display_options['fields']['title']['link_to_node'] = FALSE;
     /* Field: Content: Requests */
-    $handler->display->display_options['fields']['field_requests']['id'] = 'field_requests';
-    $handler->display->display_options['fields']['field_requests']['table'] = 'field_data_field_requests';
-    $handler->display->display_options['fields']['field_requests']['field'] = 'field_requests';
-    $handler->display->display_options['fields']['field_requests']['delta_offset'] = '0';
-    $handler->display->display_options['fields']['field_requests']['separator'] = '<br>';
+    $handler->display->display_options['fields']['field_symposium_requests']['id'] = 'field_symposium_requests';
+    $handler->display->display_options['fields']['field_symposium_requests']['table'] = 'field_data_field_symposium_requests';
+    $handler->display->display_options['fields']['field_symposium_requests']['field'] = 'field_symposium_requests';
+    $handler->display->display_options['fields']['field_symposium_requests']['delta_offset'] = '0';
+    $handler->display->display_options['fields']['field_symposium_requests']['separator'] = '<br>';
     /* Field: User: Name */
     $handler->display->display_options['fields']['name']['id'] = 'name';
     $handler->display->display_options['fields']['name']['table'] = 'users';

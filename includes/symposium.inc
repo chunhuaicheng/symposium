@@ -10,7 +10,7 @@ function symposium_node_validate($node, $form) {
   if ($type == 'symposium') {
     // make sure the short_name/id is unique
     $nid = $node->nid;
-    $id = $node->field_short_name['und'][0]['value'];
+    $id = $node->field_symposium_short_name['und'][0]['value'];
     //make sure the id id unique
     $query = NULL;
     if ($nid) { // Node Update
@@ -34,10 +34,10 @@ function symposium_node_validate($node, $form) {
     $nodes = entity_load('node', $nids);
     $used_ids = array();
     foreach ($nodes AS $node) {
-      array_push($used_ids, $node->field_short_name['und'][0]['value']);
+      array_push($used_ids, $node->field_symposium_short_name['und'][0]['value']);
     }
     if (in_array($id, $used_ids)) {
-      form_set_error('field_short_name', 'The short name is already used by another symposium.');
+      form_set_error('field_symposium_short_name', 'The short name is already used by another symposium.');
     }
     
   /*
@@ -64,7 +64,7 @@ function symposium_node_validate($node, $form) {
     $settings = symposium_get_settings();
 	if (isset($settings[$id]) && in_array($year, $settings[$id]->years)) {
       // make sure authors are listed as Last name, First name
-      $authors_field = $node->field_authors['und'];
+      $authors_field = $node->field_symposium_authors['und'];
 	  $num_authors = 0;
 	  $num_emails = 0;
 	  $num_affiliations = 0;
@@ -72,21 +72,21 @@ function symposium_node_validate($node, $form) {
         if (isset($author['value']) && trim($author['value']) != '') {
           $num_authors ++;
           if (is_numeric($key) && !preg_match('/.+?\,.+/', $author['value'])) {
-            form_set_error('field_authors', 'Please separate author\'s last name and first name with a comma. i.e. (Last name, First name)');
+            form_set_error('field_symposium_authors', 'Please separate author\'s last name and first name with a comma. i.e. (Last name, First name)');
           }
         }
       }
       // make sure emails are in valid format
-      $emails_field = $node->field_emails['und'];
+      $emails_field = $node->field_symposium_emails['und'];
       foreach ($emails_field AS $email) {
         if (isset($email['value']) && trim($email['value']) != '') {
           $num_emails ++;
           if (is_numeric($key) && !preg_match('/.+?@.+?\..+/', $email['value'])) {
-		    form_set_error('field_emails', 'Please provide valid email(s)');
+		    form_set_error('field_symposium_emails', 'Please provide valid email(s)');
 		  }		  
         }
       }
-	  $affiliation_field = $node->field_affiliation['und'];
+	  $affiliation_field = $node->field_symposium_affiliation['und'];
       foreach ($affiliation_field AS $affiliation) {
 		  if (isset($affiliation['value']) && trim($affiliation['value']) != '') {
 		    $num_affiliations++;
@@ -94,15 +94,15 @@ function symposium_node_validate($node, $form) {
 	  }
 	  // make sure emails are filled for all authors
 	  if ($num_authors > $num_emails) {
-		  form_set_error('field_emails', 'Please provide email for all authors');
+		  form_set_error('field_symposium_emails', 'Please provide email for all authors');
 	  } else if ($num_authors < $num_emails) {
-		  form_set_error('field_emails', 'Please remove email for deleted authors');
+		  form_set_error('field_symposium_emails', 'Please remove email for deleted authors');
 	  }
 	  // make sure affiliations are filled for all authors
 	  if ($num_authors > $num_affiliations) {
-		  form_set_error('field_affiliation', 'Please provide affiliation for all authors');
+		  form_set_error('field_symposium_affiliation', 'Please provide affiliation for all authors');
 	  } else if ($num_authors < $num_affiliations) {
-		  form_set_error('field_affiliation', 'Please remove affiliation for deleted authors');
+		  form_set_error('field_symposium_affiliation', 'Please remove affiliation for deleted authors');
 	  }
 	}
   }
@@ -231,7 +231,7 @@ function  symposium_setup($node) {
   menu_rebuild();
   
   // Create registration and abstract submission content types
-  $id = $node->field_short_name['und'][0]['value'];
+  $id = $node->field_symposium_short_name['und'][0]['value'];
   module_load_include('inc', 'symposium', 'includes/registration');
   symposium_create_registration_content ($id);
   module_load_include('inc', 'symposium', 'includes/abstract');

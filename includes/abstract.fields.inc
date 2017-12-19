@@ -30,12 +30,12 @@ function symposium_abstract_fields($id, $year, $title) {
   );
   
   // Presentation type
-  $field_bases['field_presentation'] = array(
+  $field_bases['field_symposium_presentation'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
-    'field_name' => 'field_presentation',
+    'field_name' => 'field_symposium_presentation',
     'indexes' => array(
       'value' => array(
         0 => 'value',
@@ -59,12 +59,12 @@ function symposium_abstract_fields($id, $year, $title) {
   );
 
   // Authors
-  $field_bases['field_authors'] = array(
+  $field_bases['field_symposium_authors'] = array(
     'active' => 1,
     'cardinality' => -1,
     'deleted' => 0,
     'entity_types' => array(),
-    'field_name' => 'field_authors',
+    'field_name' => 'field_symposium_authors',
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -84,12 +84,12 @@ function symposium_abstract_fields($id, $year, $title) {
   );
   
   // Emails
-  $field_bases['field_emails'] = array(
+  $field_bases['field_symposium_emails'] = array(
     'active' => 1,
     'cardinality' => -1,
     'deleted' => 0,
     'entity_types' => array(),
-    'field_name' => 'field_emails',
+    'field_name' => 'field_symposium_emails',
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -109,12 +109,12 @@ function symposium_abstract_fields($id, $year, $title) {
   );
   
   // Affliation
-  $field_bases['field_affiliation'] = array(
+  $field_bases['field_symposium_affiliation'] = array(
     'active' => 1,
     'cardinality' => -1,
     'deleted' => 0,
     'entity_types' => array(),
-    'field_name' => 'field_affiliation',
+    'field_name' => 'field_symposium_affiliation',
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -134,12 +134,12 @@ function symposium_abstract_fields($id, $year, $title) {
   );
   
   // Abstract
-  $field_bases['field_abstract'] = array(
+  $field_bases['field_symposium_abstract'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
-    'field_name' => 'field_abstract',
+    'field_name' => 'field_symposium_abstract',
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -202,7 +202,7 @@ function symposium_abstract_instances($id, $year, $title) {
   );
   
   // Presentation type
-  $field_instances['node-' . $id . '_' . $year . '_abstract-field_presentation'] = array(
+  $field_instances['node-' . $id . '_' . $year . '_abstract-field_symposium_presentation'] = array(
     'bundle' => $id . '_' . $year . '_abstract',
     'default_value' => array(
       0 => array(
@@ -263,7 +263,7 @@ function symposium_abstract_instances($id, $year, $title) {
       ),
     ),
     'entity_type' => 'node',
-    'field_name' => 'field_presentation',
+    'field_name' => 'field_symposium_presentation',
     'label' => 'Presentation type',
     'required' => 1,
     'settings' => array(
@@ -284,7 +284,7 @@ function symposium_abstract_instances($id, $year, $title) {
   );
 
   // Authors
-  $field_instances['node-' . $id . '_' . $year . '_abstract-field_authors'] = array(
+  $field_instances['node-' . $id . '_' . $year . '_abstract-field_symposium_authors'] = array(
     'bundle' => $id . '_' . $year . '_abstract',
     'default_value' => array(
       0 => array(
@@ -345,7 +345,7 @@ function symposium_abstract_instances($id, $year, $title) {
       ),
     ),
     'entity_type' => 'node',
-    'field_name' => 'field_authors',
+    'field_name' => 'field_symposium_authors',
     'label' => 'Authors',
     'required' => 1,
     'settings' => array(
@@ -367,7 +367,7 @@ function symposium_abstract_instances($id, $year, $title) {
   );
   
   // Emails
-  $field_instances['node-' . $id . '_' . $year . '_abstract-field_emails'] = array(
+  $field_instances['node-' . $id . '_' . $year . '_abstract-field_symposium_emails'] = array(
     'bundle' => $id . '_' . $year . '_abstract',
     'default_value' => array(
       0 => array(
@@ -428,7 +428,7 @@ function symposium_abstract_instances($id, $year, $title) {
       ),
     ),
     'entity_type' => 'node',
-    'field_name' => 'field_emails',
+    'field_name' => 'field_symposium_emails',
     'label' => 'Author Email',
     'required' => 1,
     'settings' => array(
@@ -450,7 +450,7 @@ function symposium_abstract_instances($id, $year, $title) {
   );
   
   // Affliation
-  $field_instances['node-' . $id . '_' . $year . '_abstract-field_affiliation'] = array(
+  $field_instances['node-' . $id . '_' . $year . '_abstract-field_symposium_affiliation'] = array(
     'bundle' => $id . '_' . $year . '_abstract',
     'default_value' => array(
       0 => array(
@@ -511,7 +511,7 @@ function symposium_abstract_instances($id, $year, $title) {
       ),
     ),
     'entity_type' => 'node',
-    'field_name' => 'field_affiliation',
+    'field_name' => 'field_symposium_affiliation',
     'label' => 'Author Affliation',
     'required' => 1,
     'settings' => array(
@@ -533,12 +533,12 @@ function symposium_abstract_instances($id, $year, $title) {
   );
   
   // Abstract
-  $field_instances['node-' . $id . '_' . $year . '_abstract-field_abstract'] = array(
+  $field_instances['node-' . $id . '_' . $year . '_abstract-field_symposium_abstract'] = array(
     'bundle' => $id . '_' . $year . '_abstract',
     'default_value' => array(
       0 => array(
         'value' => '',
-        '_error_element' => 'default_value_widget][field_abstract][0][value',
+        '_error_element' => 'default_value_widget][field_symposium_abstract][0][value',
       ),
     ),
     'deleted' => 0,
@@ -595,7 +595,7 @@ function symposium_abstract_instances($id, $year, $title) {
       ),
     ),
     'entity_type' => 'node',
-    'field_name' => 'field_abstract',
+    'field_name' => 'field_symposium_abstract',
     'label' => 'Abstract',
     'required' => 1,
     'settings' => array(

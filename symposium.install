@@ -132,12 +132,12 @@ function symposium_symposium_fields() {
   $field_bases = array();
   
   // Exported field_base: 'field_abstract'.
-  $field_bases['field_short_name'] = array(
+  $field_bases['field_symposium_short_name'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
-    'field_name' => 'field_short_name',
+    'field_name' => 'field_symposium_short_name',
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -156,12 +156,12 @@ function symposium_symposium_fields() {
     'type_name' => 'symposium_short_name',
   );
   
-  $field_bases['field_year'] = array(
+  $field_bases['field_symposium_year'] = array(
     'active' => 1,
     'cardinality' => -1,
     'deleted' => 0,
     'entity_types' => array(),
-    'field_name' => 'field_year',
+    'field_name' => 'field_symposium_year',
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -180,12 +180,12 @@ function symposium_symposium_fields() {
     'type_name' => 'symposium_year',
   );
   
-  $field_bases['field_roles'] = array(
+  $field_bases['field_symposium_roles'] = array(
     'active' => 1,
     'cardinality' => -1,
     'deleted' => 0,
     'entity_types' => array(),
-    'field_name' => 'field_roles',
+    'field_name' => 'field_symposium_roles',
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -204,12 +204,12 @@ function symposium_symposium_fields() {
     'type_name' => 'symposium_roles',
   );
   
-  $field_bases['field_late_role'] = array(
+  $field_bases['field_symposium_late_role'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
-    'field_name' => 'field_late_role',
+    'field_name' => 'field_symposium_late_role',
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -233,12 +233,12 @@ function symposium_symposium_fields() {
 function symposium_symposium_instances() {
   $field_instances = array();
   
-  $field_instances['node-symposium-field_short_name'] = array(
+  $field_instances['node-symposium-field_symposium_short_name'] = array(
     'bundle' => 'symposium',
     'default_value' => array(
       0 => array(
         'value' => '',
-        '_error_element' => 'default_value_widget][field_abstract][0][value',
+        '_error_element' => 'default_value_widget][field_symposium_short_name][0][value',
       ),
     ),
     'deleted' => 0,
@@ -295,7 +295,7 @@ function symposium_symposium_instances() {
       ),
     ),
     'entity_type' => 'node',
-    'field_name' => 'field_short_name',
+    'field_name' => 'field_symposium_short_name',
     'label' => 'Short name (ID)',
     'required' => 1,
     'settings' => array(
@@ -316,12 +316,12 @@ function symposium_symposium_instances() {
     'widget_type' => 'text_field',
   );
   
-  $field_instances['node-symposium-field_year'] = array(
+  $field_instances['node-symposium-field_symposium_year'] = array(
     'bundle' => 'symposium',
     'default_value' => array(
       0 => array(
         'value' => '',
-        '_error_element' => 'default_value_widget][field_abstract][0][value',
+        '_error_element' => 'default_value_widget][field_symposium_year][0][value',
       ),
     ),
     'deleted' => 0,
@@ -378,7 +378,7 @@ function symposium_symposium_instances() {
       ),
     ),
     'entity_type' => 'node',
-    'field_name' => 'field_year',
+    'field_name' => 'field_symposium_year',
     'label' => 'Year or a sequence number for creating Registration and Abstract Submission',
     'required' => 0,
     'settings' => array(
@@ -399,12 +399,12 @@ function symposium_symposium_instances() {
     'widget_type' => 'text_field',
   );
   
-  $field_instances['node-symposium-field_roles'] = array(
+  $field_instances['node-symposium-field_symposium_roles'] = array(
     'bundle' => 'symposium',
     'default_value' => array(
       0 => array(
         'value' => 'authenticated user',
-        '_error_element' => 'default_value_widget][field_abstract][0][value',
+        '_error_element' => 'default_value_widget][field_symposium_roles][0][value',
       ),
     ),
     'deleted' => 0,
@@ -461,7 +461,7 @@ function symposium_symposium_instances() {
       ),
     ),
     'entity_type' => 'node',
-    'field_name' => 'field_roles',
+    'field_name' => 'field_symposium_roles',
     'label' => 'Roles to allow registration',
     'required' => 0,
     'settings' => array(
@@ -482,12 +482,12 @@ function symposium_symposium_instances() {
     'widget_type' => 'text_field',
   );
   
-  $field_instances['node-symposium-field_late_role'] = array(
+  $field_instances['node-symposium-field_symposium_late_role'] = array(
     'bundle' => 'symposium',
     'default_value' => array(
       0 => array(
         'value' => '',
-        '_error_element' => 'default_value_widget][field_abstract][0][value',
+        '_error_element' => 'default_value_widget][field_symposium_late_role][0][value',
       ),
     ),
     'deleted' => 0,
@@ -544,7 +544,7 @@ function symposium_symposium_instances() {
       ),
     ),
     'entity_type' => 'node',
-    'field_name' => 'field_late_role',
+    'field_name' => 'field_symposium_late_role',
     'label' => 'A role to allow late registration',
     'required' => 0,
     'settings' => array(

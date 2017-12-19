@@ -3,12 +3,12 @@ function symposium_registration_fields($id, $year, $title) {
   $field_bases = array();
   
   // Register
-  $field_bases['field_register'] = array(
+  $field_bases['field_symposium_register'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
-    'field_name' => 'field_register',
+    'field_name' => 'field_symposium_register',
     'indexes' => array(
       'value' => array(
         0 => 'value',
@@ -31,12 +31,12 @@ function symposium_registration_fields($id, $year, $title) {
   );
   
   // Requests
-  $field_bases['field_requests'] = array(
+  $field_bases['field_symposium_requests'] = array(
     'active' => 1,
     'cardinality' => -1,
     'deleted' => 0,
     'entity_types' => array(),
-    'field_name' => 'field_requests',
+    'field_name' => 'field_symposium_requests',
     'indexes' => array(
       'value' => array(
         0 => 'value',
@@ -66,7 +66,7 @@ function symposium_registration_instances($id, $year, $title) {
   $field_instances = array();
   
   // Register
-  $field_instances['node-' . $id . '_' . $year . '_registration-field_register'] = array(
+  $field_instances['node-' . $id . '_' . $year . '_registration-field_symposium_register'] = array(
     'bundle' => $id . '_' . $year . '_registration',
     'default_value' => array(
       0 => array(
@@ -127,7 +127,7 @@ function symposium_registration_instances($id, $year, $title) {
       ),
     ),
     'entity_type' => 'node',
-    'field_name' => 'field_register',
+    'field_name' => 'field_symposium_register',
     'label' => 'Register',
     'required' => 1,
     'settings' => array(
@@ -148,7 +148,7 @@ function symposium_registration_instances($id, $year, $title) {
   );
   
   // Requests
-  $field_instances['node-' . $id . '_' . $year . '_registration-field_requests'] = array(
+  $field_instances['node-' . $id . '_' . $year . '_registration-field_symposium_requests'] = array(
     'bundle' => $id . '_' . $year . '_registration',
     'default_value' => array(
       0 => array(
@@ -209,7 +209,7 @@ function symposium_registration_instances($id, $year, $title) {
       ),
     ),
     'entity_type' => 'node',
-    'field_name' => 'field_requests',
+    'field_name' => 'field_symposium_requests',
     'label' => 'Requests',
     'required' => 0,
     'settings' => array(
