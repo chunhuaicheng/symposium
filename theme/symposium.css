@@ -1,3 +1,7 @@
-#modr8-form table th {
-	min-width: 260px;
+.field-name-field-symposium-authors .field-item {
+  float: left;
+  margin-right: 5px;
+}
+.field-name-field-symposium-authors .field-item:after {
+  content: '.';
 }

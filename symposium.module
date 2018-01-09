@@ -4,6 +4,10 @@ require_once 'includes/symposium.inc';
 require_once 'includes/messages.inc';
 require_once 'includes/moderation.inc';
 
+function symposium_init() {
+    drupal_add_css (drupal_get_path ( 'module', 'symposium' ) . '/theme/symposium.css' );
+}
+
 /*
  * Set up the conferences, add a value to the arrays to create a new conference
  */
