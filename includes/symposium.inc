@@ -149,7 +149,7 @@ function symposium_form_node_form_alter(&$form,&$form_state,$form_id) {
       }
     
       // add a default title
-      $form_state['node']->title = 'Registerd';
+      $form_state['node']->title = $settings[$id]->title . " $year Registration";
     
       unset($form['actions']['preview']);        // disable preview
       unset($form['revision_information']);   // disable revision
@@ -297,9 +297,24 @@ function  symposium_node_view_alter (&$build) {
         $year = $matches[2];
         // make sure the abstract submission is not closed
         $settings = symposium_get_settings();
+        
+        $markup = "<div id=\"symposium-registration-action\"><label>Action:</label><ul>";
+        if (isset($settings[$id]->payment_site) && trim($settings[$id]->payment_site)) {
+            $markup .= "
+              <li>
+                <a href=\"https://" . $settings[$id]->payment_url . "\" target=\"_blank\">Make payment through " . $settings[$id]->payment_site ."</a> to complete the registration
+              </li>
+            ";
+        }
+        $markup .= "  
+          <li>            
+            <a href=\"add/$id-$year-abstract\">Submit abstract</a> for " . $settings[$id]->title . " $year
+          </li>
+        ";
+        $markup .= "</ul></div>";
         if (isset($settings[$id]) && in_array($year, $settings[$id]->years)) {
             $build['#node']->content['my_additional_field'] = array(
-                '#markup' => "<br><div><a href=\"add/$id-$year-abstract\">Submit Abstract for " . $settings[$id]->title . " $year</a></div>",
+                '#markup' => $markup,
                 '#weight' => 60,
             );
         }

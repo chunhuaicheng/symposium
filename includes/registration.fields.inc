@@ -47,7 +47,7 @@ function symposium_registration_fields($id, $year, $title) {
     'settings' => array(
       'allowed_values' => array(
         'Exhibition' => 'I plan to put up an exhibition at the conference.',
-        'Invitation' => 'I need an official invitation from the Foreign Affairs Office, USA.',
+        'Invitation' => 'I need an official invitation from the Foreign Affairs Office.',
       ),
       'allowed_values_function' => '',
       'allowed_values_php' => '',
@@ -128,7 +128,7 @@ function symposium_registration_instances($id, $year, $title) {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_symposium_register',
-    'label' => 'Register',
+    'label' => 'Registration Status',
     'required' => 1,
     'settings' => array(
       'text_processing' => 0,

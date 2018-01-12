@@ -5,3 +5,11 @@
 .field-name-field-symposium-authors .field-item:after {
   content: '.';
 }
+
+#symposium-registration-action {
+  margin-top: 15px;
+}
+#symposium-registration-action ul{
+  margin-top: 0px;
+  padding-left: 15px;
+}

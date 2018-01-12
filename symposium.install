@@ -227,6 +227,54 @@ function symposium_symposium_fields() {
     'type' => 'text',
     'type_name' => 'symposium_late_role',
   );
+  
+  $field_bases['field_symposium_payment_site'] = array(
+      'active' => 1,
+      'cardinality' => 1,
+      'deleted' => 0,
+      'entity_types' => array(),
+      'field_name' => 'field_symposium_payment_site',
+      'indexes' => array(
+          'format' => array(
+              0 => 'format',
+          ),
+      ),
+      'locked' => 0,
+      'module' => 'text',
+      'settings' => array(
+          'allowed_values' => '',
+          'allowed_values_php' => '',
+          'max_length' => '60',
+          'text_processing' => 0,
+      ),
+      'translatable' => 0,
+      'type' => 'text',
+      'type_name' => 'symposium_payment_site',
+  );
+  
+  $field_bases['field_symposium_payment_url'] = array(
+      'active' => 1,
+      'cardinality' => 1,
+      'deleted' => 0,
+      'entity_types' => array(),
+      'field_name' => 'field_symposium_payment_url',
+      'indexes' => array(
+          'format' => array(
+              0 => 'format',
+          ),
+      ),
+      'locked' => 0,
+      'module' => 'text',
+      'settings' => array(
+          'allowed_values' => '',
+          'allowed_values_php' => '',
+          'max_length' => '60',
+          'text_processing' => 0,
+      ),
+      'translatable' => 0,
+      'type' => 'text',
+      'type_name' => 'symposium_payment_url',
+  );
   return $field_bases;
 }
 
@@ -563,6 +611,172 @@ function symposium_symposium_instances() {
       'weight' => 30,
     ),
     'widget_type' => 'text_field',
+  );
+  
+  $field_instances['node-symposium-field_symposium_payment_site'] = array(
+      'bundle' => 'symposium',
+      'default_value' => array(
+          0 => array(
+              'value' => '',
+              '_error_element' => 'default_value_widget][field_symposium_payment_site][0][value',
+          ),
+      ),
+      'deleted' => 0,
+      'description' => 'Name of the payment site',
+      'display' => array(
+          'default' => array(
+              'label' => 'above',
+              'module' => 'text',
+              'settings' => array(),
+              'type' => 'text_default',
+              'weight' => 30,
+          ),
+          'full' => array(
+              'label' => 'above',
+              'module' => 'text',
+              'settings' => array(),
+              'type' => 'text_default',
+              'weight' => 30,
+          ),
+          'rss' => array(
+              'label' => 'above',
+              'module' => 'text',
+              'settings' => array(),
+              'type' => 'text_default',
+              'weight' => 30,
+          ),
+          'search_index' => array(
+              'label' => 'above',
+              'module' => 'text',
+              'settings' => array(),
+              'type' => 'text_default',
+              'weight' => 30,
+          ),
+          'search_result' => array(
+              'label' => 'above',
+              'module' => 'text',
+              'settings' => array(),
+              'type' => 'text_default',
+              'weight' => 30,
+          ),
+          'teaser' => array(
+              'label' => 'above',
+              'module' => 'text',
+              'settings' => array(),
+              'type' => 'text_default',
+              'weight' => 30,
+          ),
+          'token' => array(
+              'label' => 'above',
+              'module' => 'text',
+              'settings' => array(),
+              'type' => 'text_default',
+              'weight' => 30,
+          ),
+      ),
+      'entity_type' => 'node',
+      'field_name' => 'field_symposium_payment_site',
+      'label' => 'Name of payment site',
+      'required' => 0,
+      'settings' => array(
+          'text_processing' => 0,
+          'user_register_form' => FALSE,
+      ),
+      'weight' => 30,
+      'widget' => array(
+          'active' => 0,
+          'module' => 'text',
+          'settings' => array(
+              'default_value_php' => NULL,
+              'size' => 60,
+          ),
+          'type' => 'text_field',
+          'weight' => 30,
+      ),
+      'widget_type' => 'text_field',
+  );
+  
+  $field_instances['node-symposium-field_symposium_payment_url'] = array(
+      'bundle' => 'symposium',
+      'default_value' => array(
+          0 => array(
+              'value' => '',
+              '_error_element' => 'default_value_widget][field_symposium_payment_url][0][value',
+          ),
+      ),
+      'deleted' => 0,
+      'description' => 'URL of the payment site',
+      'display' => array(
+          'default' => array(
+              'label' => 'above',
+              'module' => 'text',
+              'settings' => array(),
+              'type' => 'text_default',
+              'weight' => 30,
+          ),
+          'full' => array(
+              'label' => 'above',
+              'module' => 'text',
+              'settings' => array(),
+              'type' => 'text_default',
+              'weight' => 30,
+          ),
+          'rss' => array(
+              'label' => 'above',
+              'module' => 'text',
+              'settings' => array(),
+              'type' => 'text_default',
+              'weight' => 30,
+          ),
+          'search_index' => array(
+              'label' => 'above',
+              'module' => 'text',
+              'settings' => array(),
+              'type' => 'text_default',
+              'weight' => 30,
+          ),
+          'search_result' => array(
+              'label' => 'above',
+              'module' => 'text',
+              'settings' => array(),
+              'type' => 'text_default',
+              'weight' => 30,
+          ),
+          'teaser' => array(
+              'label' => 'above',
+              'module' => 'text',
+              'settings' => array(),
+              'type' => 'text_default',
+              'weight' => 30,
+          ),
+          'token' => array(
+              'label' => 'above',
+              'module' => 'text',
+              'settings' => array(),
+              'type' => 'text_default',
+              'weight' => 30,
+          ),
+      ),
+      'entity_type' => 'node',
+      'field_name' => 'field_symposium_payment_url',
+      'label' => 'URL of the payment site',
+      'required' => 0,
+      'settings' => array(
+          'text_processing' => 0,
+          'user_register_form' => FALSE,
+      ),
+      'weight' => 30,
+      'widget' => array(
+          'active' => 0,
+          'module' => 'text',
+          'settings' => array(
+              'default_value_php' => NULL,
+              'size' => 60,
+          ),
+          'type' => 'text_field',
+          'weight' => 30,
+      ),
+      'widget_type' => 'text_field',
   );
   return $field_instances;
 }

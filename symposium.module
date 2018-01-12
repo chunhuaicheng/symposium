@@ -69,6 +69,12 @@ function symposium_get_settings() {
     // role allowed for registration even when it's closed 
     $setting->late_role =  isset($n->field_symposium_late_role['und']) ? $n->field_symposium_late_role['und'][0]['value'] : '';
     
+    // payment site
+    $setting->payment_site =  isset($n->field_symposium_payment_site['und']) ? $n->field_symposium_payment_site['und'][0]['value'] : '';
+    
+    // payment url
+    $setting->payment_url =  isset($n->field_symposium_payment_url['und']) ? $n->field_symposium_payment_url['und'][0]['value'] : '';
+    
     $settings[$id] = $setting;
   }
   return $settings;

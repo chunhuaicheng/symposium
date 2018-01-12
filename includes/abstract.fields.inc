@@ -1,6 +1,7 @@
 <?php
 function symposium_abstract_fields($id, $year, $title) {
   $field_bases = array();
+  $settings = symposium_get_settings();
   
   // Working_group'.
   $field_bases['taxonomy_symposium_working_group'] = array(
@@ -56,6 +57,35 @@ function symposium_abstract_fields($id, $year, $title) {
     'translatable' => 0,
     'type' => 'list_text',
     'type_name' => $id . '_' . $year . '_abstract',
+  );
+  
+  // Payment
+  $field_bases['field_symposium_payment'] = array(
+      'active' => 1,
+      'cardinality' => 1,
+      'deleted' => 0,
+      'entity_types' => array(),
+      'field_name' => 'field_symposium_payment',
+      'indexes' => array(
+          'value' => array(
+              0 => 'value',
+          ),
+      ),
+      'locked' => 0,
+      'module' => 'list',
+      'settings' => array(
+          'allowed_values' => array(
+              'Unpaid' => 'I\'ve not submitted the payment. Before continuing, please go to <a href="https://'. $settings[$id]->payment_url .'" target="_blank">' . $settings[$id]->payment_site . '</a> to pay and complete registration.',
+              'Paid' => 'The payment has been made.',
+          ),
+          'allowed_values_function' => '',
+          'allowed_values_php' => '',
+          'legacy_values' => array(),
+          'text_processing' => 0,
+      ),
+      'translatable' => 0,
+      'type' => 'list_text',
+      'type_name' => $id . '_' . $year . '_abstract',
   );
 
   // Authors
@@ -282,6 +312,88 @@ function symposium_abstract_instances($id, $year, $title) {
     ),
     'widget_type' => 'optionwidgets_buttons',
   );
+  
+  // Payment
+  $field_instances['node-' . $id . '_' . $year . '_abstract-field_symposium_payment'] = array(
+      'bundle' => $id . '_' . $year . '_abstract',
+      'default_value' => array(
+          0 => array(
+              'value' => '',
+          ),
+      ),
+      'deleted' => 0,
+      'description' => '',
+      'display' => array(
+          'default' => array(
+              'label' => 'inline',
+              'module' => 'text',
+              'settings' => array(),
+              'type' => 'text_default',
+              'weight' => 1,
+          ),
+          'full' => array(
+              'label' => 'inline',
+              'module' => 'text',
+              'settings' => array(),
+              'type' => 'text_default',
+              'weight' => 1,
+          ),
+          'rss' => array(
+              'label' => 'inline',
+              'module' => 'text',
+              'settings' => array(),
+              'type' => 'text_default',
+              'weight' => 1,
+          ),
+          'search_index' => array(
+              'label' => 'inline',
+              'module' => 'text',
+              'settings' => array(),
+              'type' => 'text_default',
+              'weight' => 1,
+          ),
+          'search_result' => array(
+              'label' => 'inline',
+              'module' => 'text',
+              'settings' => array(),
+              'type' => 'text_default',
+              'weight' => 1,
+          ),
+          'teaser' => array(
+              'label' => 'inline',
+              'module' => 'text',
+              'settings' => array(),
+              'type' => 'text_default',
+              'weight' => 1,
+          ),
+          'token' => array(
+              'label' => 'inline',
+              'module' => 'text',
+              'settings' => array(),
+              'type' => 'text_default',
+              'weight' => 1,
+          ),
+      ),
+      'entity_type' => 'node',
+      'field_name' => 'field_symposium_payment',
+      'label' => 'Registration Fee',
+      'required' => 1,
+      'settings' => array(
+          'text_processing' => 0,
+          'user_register_form' => FALSE,
+      ),
+      'weight' => 1,
+      'widget' => array(
+          'active' => 0,
+          'module' => 'options',
+          'settings' => array(
+              'default_value_php' => NULL,
+          ),
+          'type' => 'options_buttons',
+          'weight' => 1,
+      ),
+      'widget_type' => 'optionwidgets_buttons',
+  );
 
   // Authors
   $field_instances['node-' . $id . '_' . $year . '_abstract-field_symposium_authors'] = array(
@@ -292,7 +404,7 @@ function symposium_abstract_instances($id, $year, $title) {
       ),
     ),
     'deleted' => 0,
-    'description' => 'List all authors in the \'Last name, First name\' format',
+    'description' => 'List all authors in the \'Last name, First name\' format (e.g Eikenberry, Tomas). Drag the cross icon or change the row weights to re-order.',
     'display' => array(
       'default' => array(
         'label' => 'inline',
@@ -375,7 +487,7 @@ function symposium_abstract_instances($id, $year, $title) {
       ),
     ),
     'deleted' => 0,
-    'description' => 'List authors\' email in the same order as the authors listed above',
+    'description' => 'List authors\' email in the same order as the authors listed above. Drag the cross icon or change the row weights to re-order.',
     'display' => array(
       'default' => array(
         'label' => 'inline',
@@ -458,7 +570,7 @@ function symposium_abstract_instances($id, $year, $title) {
       ),
     ),
     'deleted' => 0,
-    'description' => 'List authors\' affliation in the same order as the authors listed above',
+    'description' => 'List authors\' affliation in the same order as the authors listed above. Drag the cross icon or change the row weights to re-order.',
     'display' => array(
       'default' => array(
         'label' => 'inline',
