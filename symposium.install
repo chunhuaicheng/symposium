@@ -268,7 +268,7 @@ function symposium_symposium_fields() {
       'settings' => array(
           'allowed_values' => '',
           'allowed_values_php' => '',
-          'max_length' => '60',
+          'max_length' => '250',
           'text_processing' => 0,
       ),
       'translatable' => 0,
