@@ -75,7 +75,7 @@ function symposium_abstract_fields($id, $year, $title) {
       'module' => 'list',
       'settings' => array(
           'allowed_values' => array(
-              'Unpaid' => 'I\'ve not submitted the payment. Before continuing, please go to <a href="https://'. $settings[$id]->payment_url .'" target="_blank">' . $settings[$id]->payment_site . '</a> to pay and complete registration.',
+              'Unpaid' => 'I\'ve not submitted the payment. Before continuing, please go to <a href="https://'. $settings[$id]->payment_url .'" target="_blank">' . $settings[$id]->payment_site . '</a> to pay and complete the registration.',
               'Paid' => 'The payment has been made.',
           ),
           'allowed_values_function' => '',

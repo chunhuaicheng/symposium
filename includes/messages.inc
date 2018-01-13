@@ -4,7 +4,7 @@
 function symposium_message_create_account($title) {
   $message = t(
     "Please <a href=\"@user\">Log in</a><br>$title is open to registered users only.
-      If you don't have an account, please click here to <a href=\"@register\">Create 
+      If you don't have an account, please follow the link to <a href=\"@register\">Create 
       New Account</a>.",
       array(
         '@user' => url('user'),
@@ -28,9 +28,9 @@ function symposium_message_already_registered ($id, $year, $nid, $title) {
   $message = t(
     "You are already registered to the $title $year</br>
      <ul style=\"padding-left:12px\">
-       <li>To make change to your registration, please click here: <a href=\"@register\">Update Registration</a></li>
-       <li>To submit an abstract, please click here: <a href=\"@abstract\">Abstract Submission</a></li>
-       <li>To review your submissions, please click here: <a href=\"@submission\">My Submissions</a></li>
+       <li>To make change to your registration, please follow the link: <a href=\"@register\">Update Registration</a></li>
+       <li>To submit an abstract, please follow the link: <a href=\"@abstract\">Abstract Submission</a></li>
+       <li>To review your submissions, please follow the link: <a href=\"@submission\">My Submissions</a></li>
      </ul>",
       array(
         '@register' => url("node/$nid/edit"),
@@ -44,7 +44,7 @@ function symposium_message_already_registered ($id, $year, $nid, $title) {
 // Not yet registered
 function symposium_message_not_yet_registered ($id, $year, $title) {
   $message = t(
-    "Please register for the $title $year first. <br> Click here to
+    "Please register for the $title $year first. <br> Follow the link to
      <a href=\"@register\">Register</a>",
     array(
       '@register' => url("symposium/$id/$year/registration")
