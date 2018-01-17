@@ -46,8 +46,8 @@ function symposium_abstract_fields($id, $year, $title) {
     'module' => 'list',
     'settings' => array(
       'allowed_values' => array(
-        'Oral' => 'Oral',
-        'Poster' => 'Poster',
+        '15 miniute Oral' => '15 mininute Oral',
+        '5 minute Oral and Poster' => '5 minute Oral and Poster',
       ),
       'allowed_values_function' => '',
       'allowed_values_php' => '',
