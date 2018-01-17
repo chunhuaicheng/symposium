@@ -26,12 +26,12 @@ function symposium_message_already_registered ($id, $year, $nid, $title) {
   global $user;
   $uid = $user->uid;
   $message = t(
-    "You are already registered to the $title $year</br>
-     <ul style=\"padding-left:12px\">
+    "You are already registered to the $title $year
+     <div id=\"symposium-registration-action\"><ul>
        <li>To make change to your registration, please follow the link: <a href=\"@register\">Update Registration</a></li>
        <li>To submit an abstract, please follow the link: <a href=\"@abstract\">Abstract Submission</a></li>
        <li>To review your submissions, please follow the link: <a href=\"@submission\">My Submissions</a></li>
-     </ul>",
+     </ul></div>",
       array(
         '@register' => url("node/$nid/edit"),
         '@abstract' => url("node/add/$id-" . $year . "-abstract"),
