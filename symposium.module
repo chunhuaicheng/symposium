@@ -3,6 +3,7 @@ require_once 'includes/checkpoint.inc';
 require_once 'includes/symposium.inc';
 require_once 'includes/messages.inc';
 require_once 'includes/moderation.inc';
+require_once 'includes/reservation.inc';
 
 function symposium_init() {
     drupal_add_css (drupal_get_path ( 'module', 'symposium' ) . '/theme/symposium.css' );
@@ -106,6 +107,14 @@ function  symposium_menu () {
         'type' => MENU_CALLBACK,
         'access arguments' => array('access content'),
       );
+      
+      $items ["symposium/$id/$year/reservation"] = array (
+          'title' => "$title $year Event Reservation",
+          'page callback' => 'symposium_event_reservation',
+          'page arguments' => array(1, 2),
+          'type' => MENU_CALLBACK,
+          'access arguments' => array('access content'),
+      );
     }
     foreach ($closed AS $year) {
       $items ["symposium/$id/$year/registration"] = array (
@@ -133,6 +142,7 @@ function  symposium_menu () {
     'type' => MENU_CALLBACK,
     'access arguments' => array('view own unpublished content'),
   );
+  
   return $items;
 }
 
@@ -237,6 +247,13 @@ function symposium_views_default_views() {
     $handler->display->display_options['style_plugin'] = 'default';
     $handler->display->display_options['row_plugin'] = 'node';
     $handler->display->display_options['row_options']['view_mode'] = 'full';
+    /* No results behavior: Global: Text area */
+    $handler->display->display_options['empty']['area']['id'] = 'area';
+    $handler->display->display_options['empty']['area']['table'] = 'views';
+    $handler->display->display_options['empty']['area']['field'] = 'area';
+    $handler->display->display_options['empty']['area']['empty'] = TRUE;
+    $handler->display->display_options['empty']['area']['content'] = 'No results';
+    $handler->display->display_options['empty']['area']['format'] = 'filtered_html';
     /* Field: Content: Title */
     $handler->display->display_options['fields']['title']['id'] = 'title';
     $handler->display->display_options['fields']['title']['table'] = 'node';
@@ -313,6 +330,13 @@ function symposium_views_default_views() {
             'empty_column' => 0,
         ),
     );
+    /* No results behavior: Global: Text area */
+    $handler->display->display_options['empty']['area']['id'] = 'area';
+    $handler->display->display_options['empty']['area']['table'] = 'views';
+    $handler->display->display_options['empty']['area']['field'] = 'area';
+    $handler->display->display_options['empty']['area']['empty'] = TRUE;
+    $handler->display->display_options['empty']['area']['content'] = 'No results';
+    $handler->display->display_options['empty']['area']['format'] = 'filtered_html';
     /* Relationship: Content: Author */
     $handler->display->display_options['relationships']['uid']['id'] = 'uid';
     $handler->display->display_options['relationships']['uid']['table'] = 'node';
@@ -327,12 +351,17 @@ function symposium_views_default_views() {
     $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
     $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
     $handler->display->display_options['fields']['title']['link_to_node'] = FALSE;
-    /* Field: Content: Requests */
-    $handler->display->display_options['fields']['field_symposium_requests']['id'] = 'field_symposium_requests';
-    $handler->display->display_options['fields']['field_symposium_requests']['table'] = 'field_data_field_symposium_requests';
-    $handler->display->display_options['fields']['field_symposium_requests']['field'] = 'field_symposium_requests';
-    $handler->display->display_options['fields']['field_symposium_requests']['delta_offset'] = '0';
-    $handler->display->display_options['fields']['field_symposium_requests']['separator'] = '<br>';
+    /* Field: Content: Invitation */
+    $handler->display->display_options['fields']['field_symposium_invitation']['id'] = 'field_symposium_invitation';
+    $handler->display->display_options['fields']['field_symposium_invitation']['table'] = 'field_data_field_symposium_invitation';
+    $handler->display->display_options['fields']['field_symposium_invitation']['field'] = 'field_symposium_invitation';
+    $handler->display->display_options['fields']['field_symposium_invitation']['delta_offset'] = '0';
+    /* Field: Content: I wish to bring guests. Number of guests: */
+    $handler->display->display_options['fields']['field_symposium_guests']['id'] = 'field_symposium_guests';
+    $handler->display->display_options['fields']['field_symposium_guests']['table'] = 'field_data_field_symposium_guests';
+    $handler->display->display_options['fields']['field_symposium_guests']['field'] = 'field_symposium_guests';
+    $handler->display->display_options['fields']['field_symposium_guests']['label'] = 'Number of guests';
+    $handler->display->display_options['fields']['field_symposium_guests']['empty'] = 'None';
     /* Field: User: Name */
     $handler->display->display_options['fields']['name']['id'] = 'name';
     $handler->display->display_options['fields']['name']['table'] = 'users';
