@@ -3,7 +3,6 @@ require_once 'includes/checkpoint.inc';
 require_once 'includes/symposium.inc';
 require_once 'includes/messages.inc';
 require_once 'includes/moderation.inc';
-require_once 'includes/reservation.inc';
 
 function symposium_init() {
     drupal_add_css (drupal_get_path ( 'module', 'symposium' ) . '/theme/symposium.css' );
@@ -106,14 +105,6 @@ function  symposium_menu () {
         'page arguments' => array(1, 2),
         'type' => MENU_CALLBACK,
         'access arguments' => array('access content'),
-      );
-      
-      $items ["symposium/$id/$year/reservation"] = array (
-          'title' => "$title $year Event Reservation",
-          'page callback' => 'symposium_event_reservation',
-          'page arguments' => array(1, 2),
-          'type' => MENU_CALLBACK,
-          'access arguments' => array('access content'),
       );
     }
     foreach ($closed AS $year) {
@@ -252,7 +243,7 @@ function symposium_views_default_views() {
     $handler->display->display_options['empty']['area']['table'] = 'views';
     $handler->display->display_options['empty']['area']['field'] = 'area';
     $handler->display->display_options['empty']['area']['empty'] = TRUE;
-    $handler->display->display_options['empty']['area']['content'] = 'No results';
+    $handler->display->display_options['empty']['area']['content'] = 'There is currently no publication.';
     $handler->display->display_options['empty']['area']['format'] = 'filtered_html';
     /* Field: Content: Title */
     $handler->display->display_options['fields']['title']['id'] = 'title';
@@ -272,7 +263,7 @@ function symposium_views_default_views() {
     $handler->display->display_options['arguments']['type']['field'] = 'type';
     $handler->display->display_options['arguments']['type']['default_action'] = 'default';
     $handler->display->display_options['arguments']['type']['default_argument_type'] = 'fixed';
-    $handler->display->display_options['arguments']['type']['default_argument_options']['argument'] = 'No results';
+    $handler->display->display_options['arguments']['type']['default_argument_options']['argument'] = 'No registered user.';
     $handler->display->display_options['arguments']['type']['summary']['number_of_records'] = '0';
     $handler->display->display_options['arguments']['type']['summary']['format'] = 'default_summary';
     $handler->display->display_options['arguments']['type']['summary_options']['items_per_page'] = '25';

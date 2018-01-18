@@ -46,7 +46,7 @@ function symposium_registration_fields($id, $year, $title) {
     'module' => 'list',
     'settings' => array(
       'allowed_values' => array(
-        'Invitation Needed' => 'I need an official invitation from the Foreign Affairs Office.',
+        'Invitation Needed' => 'I need an official invitation.',
       ),
       'allowed_values_function' => '',
       'allowed_values_php' => '',
