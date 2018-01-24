@@ -3,7 +3,7 @@
   margin-right: 5px;
 }
 .field-name-field-symposium-authors .field-item:after {
-  content: '.';
+  content: ';';
 }
 
 #symposium-registration-action {

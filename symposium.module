@@ -127,7 +127,7 @@ function  symposium_menu () {
   }
   
   $items ["symposium/mysubmission/%/%"] = array (
-    'title' => "My submission",
+    'title' => "My Abstract Submission",
     'page callback' => 'symposium_mysubmission',
     'page arguments' => array(2, 3),
     'type' => MENU_CALLBACK,
@@ -182,9 +182,9 @@ function symposium_block_view($delta = '') {
               );
               $access = user_access('view own unpublished content');
               if ($access) {
-                  $block['content'] .= t("<li><a href=\"@submission\">My submission</a></li>", array('@submission' => url("symposium/mysubmission/$id/$year")));
+                  $block['content'] .= t("<li><a href=\"@submission\">My Abstract Submission</a></li>", array('@submission' => url("symposium/mysubmission/$id/$year")));
               }
-              $block['content'] .= t("<li><a href=\"@pub\">Current Publication</a></li>", array('@pub' => url("symposium/list/abstract/$id" . "_" . $year . "_abstract")));
+              $block['content'] .= t("<li><a href=\"@pub\">Approved Abstracts</a></li>", array('@pub' => url("symposium/list/abstract/$id" . "_" . $year . "_abstract")));
               $access = user_access('administer nodes');
               if ($access) {
                   $block['content'] .= t("<li><a href=\"@registered\">Registered Users</a></li></ul>", array('@registered' => url("symposium/list/registration/$id" . "_" . $year . "_registration")));

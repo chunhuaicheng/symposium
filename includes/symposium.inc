@@ -215,7 +215,7 @@ function  symposium_node_insert ($node) {
     ->fields(array('moderate' => '1'))
     ->condition('nid', $node->nid)
     ->execute();
-    drupal_set_message(t('Thank you for submitting the abstract.'));
+    drupal_set_message(t('Thank you for submitting an abstract. To log out, please use the \'Log out\' link under the \'My account\' menu at the top navigation bar.'));
   }
 }
 

@@ -30,7 +30,7 @@ function symposium_message_already_registered ($id, $year, $nid, $title) {
      <div id=\"symposium-registration-action\"><ul>
        <li>To make change to your registration, please follow the link: <a href=\"@register\">Update Registration</a></li>
        <li>To submit an abstract, please follow the link: <a href=\"@abstract\">Abstract Submission</a></li>
-       <li>To review your submissions, please follow the link: <a href=\"@submission\">My Submissions</a></li>
+       <li>To review your submissions, please follow the link: <a href=\"@submission\">My Abstract Submissions</a></li>
      </ul></div>",
       array(
         '@register' => url("node/$nid/edit"),
