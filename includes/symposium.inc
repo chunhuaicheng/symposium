@@ -176,7 +176,7 @@ function symposium_form_node_form_alter(&$form,&$form_state,$form_id) {
     $year = $matches[2];
     // make sure the abstract submission is not closed
     $settings = symposium_get_settings();
-	if (isset($settings[$id]) && in_array($year, $settings[$id]->years)) {
+    if (isset($settings[$id]) && in_array($year, $settings[$id]->years)) {
       $setting = $settings[$id];
       $closed = $setting->closed;
       if (in_array($year, $closed)) {
@@ -187,7 +187,15 @@ function symposium_form_node_form_alter(&$form,&$form_state,$form_id) {
       // make sure the user is already registered
       $sql = "SELECT nid FROM {node} WHERE type = '" . $id . "_" . $year . "_registration' AND uid = :uid";
       $nid = db_query($sql, array(':uid' => $user->uid))->fetchField();
-      if (!$nid) {
+      // grant access to role who has 'edit any $id_$year_abstract content' permission
+      $granted = FALSE;
+      $grant_check = "edit any " . $id . "_" . $year . "_abstract content";
+      foreach (user_role_permissions($roles) AS $p) {
+        if (isset ($p[$grant_check]) && $p[$grant_check]) {
+          $granted = TRUE;
+        }
+      }
+      if (!$nid && !$granted) {
         drupal_goto("symposium/$id/$year/abstract_submission");
       }
     
