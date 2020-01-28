@@ -134,6 +134,23 @@ function  symposium_menu () {
     'access arguments' => array('view own unpublished content'),
   );
   
+  $items['admin/config/symposium'] = array(
+      'title' => 'Symposium',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('symposium_admin_form'),
+      'access arguments' => array('administer site configuration'),
+      'file' => 'includes/symposium.admin.inc',
+  );
+  
+  $items['admin/config/symposium/settings'] = array(
+      'title' => 'Settings',
+      'description' => 'Configure module settings',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('symposium_admin_form'),
+      'access arguments' => array('administer site configuration'),
+      'file' => 'includes/symposium.admin.inc',
+  );   
+  
   return $items;
 }
 
@@ -185,7 +202,7 @@ function symposium_block_view($delta = '') {
                   $block['content'] .= t("<li><a href=\"@submission\">My Abstract Submission</a></li>", array('@submission' => url("symposium/mysubmission/$id/$year")));
               }
               $block['content'] .= t("<li><a href=\"@pub\">Approved Abstracts</a></li>", array('@pub' => url("symposium/list/abstract/$id" . "_" . $year . "_abstract")));
-              $access = user_access('administer nodes');
+              $access = drupal_valid_path("symposium/list/registration/$id" . "_" . $year . "_registration");
               if ($access) {
                   $block['content'] .= t("<li><a href=\"@registered\">Registered Users</a></li></ul>", array('@registered' => url("symposium/list/registration/$id" . "_" . $year . "_registration")));
               } else {

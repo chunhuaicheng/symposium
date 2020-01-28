@@ -43,7 +43,13 @@ function symposium_create_registration_content ($id) {
       node_type_save($type);
       
       // set variables for the content type default (published, with preview, no comment)
-      variable_set('node_options_' . $id . '_' . $year . '_registration', array());
+      $moderate = variable_get('symposium_moderate_registration', 0);
+      if ($moderate) {
+        variable_set('node_options_' . $id . '_' . $year . '_registration', array('moderate'));
+      }
+      else {
+        variable_set('node_options_' . $id . '_' . $year . '_registration', array());
+      }
       variable_set('node_preview_' . $id . '_' . $year . '_registration', '0');
       variable_set('comment_' . $id . '_' . $year . '_registration', '0');
     }

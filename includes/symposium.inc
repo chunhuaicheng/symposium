@@ -317,10 +317,13 @@ function  symposium_node_view_alter (&$build) {
         }
         $markup .= "  
           <li>            
-            <a href=\"add/$id-$year-abstract\">Submit abstract</a> for " . $settings[$id]->title . " $year
-          </li>
+            <a href=\"/symposium/$id/$year/abstract_submission\">Submit abstract</a> for " . $settings[$id]->title . " $year
         ";
-        $markup .= "</ul></div>";
+        $node = $build['#node'];
+        if (isset($node->moderate) && $node->moderate) {
+          $markup .= "(Closed until approval of your registration)"; 
+        }
+        $markup .= "</li></ul></div>";
         if (isset($settings[$id]) && in_array($year, $settings[$id]->years)) {
             $build['#node']->content['my_additional_field'] = array(
                 '#markup' => $markup,

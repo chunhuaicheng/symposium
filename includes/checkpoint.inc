@@ -78,8 +78,18 @@ function  symposium_abstract_submission_check ($id, $year) {
     
     // If the user has already registered
     if ($nid) {
-      drupal_goto("node/add/" . $id ."-" . $year . "-abstract");
-      
+      $moderate = variable_get('symposium_moderate_registration', 0);
+      if ($moderate) {
+          $status = db_query("SELECT moderate FROM {node} WHERE nid = :nid", array(':nid' => $nid))->fetchField();
+          if ($status) {
+            return "<div style=margin-top:20px;margin-bottom:20px>Your registration is pending for review. Abstract submission will open up once registration requirements (such as payment) are met.</div>";
+          } else {
+              drupal_goto("node/add/" . $id ."-" . $year . "-abstract");
+          }
+      }
+      else {
+        drupal_goto("node/add/" . $id ."-" . $year . "-abstract");
+      }
       // If the user not yet registered
     } else {
       return symposium_message_not_yet_registered ($id, $year, $title);
